@@ -13,7 +13,7 @@ from sensor_state_data import (
 
 from .parser import QingpingBluetoothDeviceData
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 __all__ = [
     "QingpingBluetoothDeviceData",
