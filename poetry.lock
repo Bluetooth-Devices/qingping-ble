@@ -440,7 +440,7 @@ use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "sensor-state-data"
-version = "2.0.2"
+version = "2.1.0"
 description = "Models for storing and converting Sensor Data state"
 category = "main"
 optional = false
@@ -622,7 +622,7 @@ docs = ["myst-parser", "Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "2f183727b12846a1c972f90fc72af23ae82220028b6685df8d8a4951c79ac321"
+content-hash = "bae5b147faedca584f783479d35d285617ebc169c3a84237a84709b95da1bfe2"
 
 [metadata.files]
 alabaster = []
