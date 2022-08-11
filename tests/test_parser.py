@@ -45,7 +45,7 @@ def test_motion_and_light_signal_only():
         title=None,
         devices={
             None: SensorDeviceInfo(
-                name="Qingping Motion & Light " "EEFF",
+                name="Motion & Light " "EEFF",
                 model="CGPR1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -111,7 +111,7 @@ def test_motion_and_light_battery_update():
         title=None,
         devices={
             None: SensorDeviceInfo(
-                name="Qingping Motion & Light " "EEFF",
+                name="Motion & Light " "EEFF",
                 model="CGPR1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -176,7 +176,7 @@ def test_has_motion():
         title=None,
         devices={
             None: SensorDeviceInfo(
-                name="Qingping Motion & Light " "EEFF",
+                name="Motion & Light " "EEFF",
                 model="CGPR1",
                 manufacturer="Qingping",
                 sw_version=None,
