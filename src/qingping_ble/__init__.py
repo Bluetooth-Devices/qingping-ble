@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 from sensor_state_data import (
-    DeviceClass,
+    BinarySensorDeviceClass,
+    BinarySensorValue,
     DeviceKey,
     SensorDescription,
+    SensorDeviceClass,
     SensorDeviceInfo,
     SensorUpdate,
     SensorValue,
@@ -17,11 +19,13 @@ __version__ = "0.1.0"
 
 __all__ = [
     "QingpingBluetoothDeviceData",
+    "BinarySensorDeviceClass",
+    "BinarySensorValue",
     "SensorDescription",
     "SensorDeviceInfo",
-    "DeviceClass",
     "DeviceKey",
     "SensorUpdate",
+    "SensorDeviceClass",
     "SensorDeviceInfo",
     "SensorValue",
     "Units",

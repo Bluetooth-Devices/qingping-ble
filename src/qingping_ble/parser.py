@@ -12,7 +12,7 @@ from struct import unpack
 
 from bluetooth_sensor_state_data import BluetoothData
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import SensorLibrary
+from sensor_state_data import BinarySensorDeviceClass, SensorLibrary
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,9 +56,9 @@ class QingpingBluetoothDeviceData(BluetoothData):
             f"{service_info.name} {short_address(service_info.address)}"
         )
         self.set_device_manufacturer("Qingping")
-        self._process_update(service_info.name, service_info.address, data)
+        self._process_update(data)
 
-    def _process_update(self, local_name: str, address: str, data: bytes) -> None:
+    def _process_update(self, data: bytes) -> None:
         """Update from BLE advertisement data."""
         _LOGGER.debug("Parsing Qingping BLE advertisement data: %s", data)
         msg_length = len(data)
@@ -89,28 +89,32 @@ class QingpingBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(SensorLibrary.PRESSURE__MBAR, pressure / 10)
         elif xdata_id == 0x08 and xdata_size == 4:
             (motion, illuminance_1, illuminance_2) = unpack("<BHB", xdata)
-            # result.update(
-            #    {
-            #        "motion": motion,
-            #        "illuminance": illuminance_1 + illuminance_2,
-            #    }
-            # )
-            # if motion:
-            # result.update({"motion timer": 1})
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.MOTION, bool(motion)
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + illuminance_2
+            )
         elif xdata_id == 0x09 and xdata_size == 4:
-            (illuminance,) = unpack("<I", xdata)  # noqa: F841
-            # result.update({"illuminance": illuminance})
+            illuminance = unpack("<I", xdata)[0]
+            self.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illuminance)
         elif xdata_id == 0x11 and xdata_size == 1:
-            light = unpack("B", xdata)[0]  # noqa: F841
-            # result.update({"light": light})
+            light = unpack("B", xdata)[0]
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.LIGHT, bool(light)
+            )
         elif xdata_id == 0x12 and xdata_size == 4:
-            (pm2_5, pm10) = unpack("<HH", xdata)  # noqa: F841
-            # result.update({"pm2.5": pm2_5, "pm10": pm10})
+            (pm2_5, pm10) = unpack("<HH", xdata)
+            self.update_predefined_sensor(SensorLibrary.PM25, pm2_5)
+            self.update_predefined_sensor(SensorLibrary.PM10, pm10)
         elif xdata_id == 0x13 and xdata_size == 2:
             co2 = unpack("<H", xdata)[0]  # noqa: F841
-            # result.update({"co2": co2})
+            self.update_predefined_sensor(
+                SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
+            )
         elif xdata_id == 0x0F and xdata_size == 1:
-            packet_id = unpack("B", xdata)[0]  # noqa: F841
+            pass
+            # packet_id = unpack("B", xdata)[0]  # noqa: F841
             # result.update({"packet": packet_id})
         else:
             _LOGGER.debug(
