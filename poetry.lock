@@ -440,14 +440,14 @@ use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "sensor-state-data"
-version = "2.1.0"
+version = "2.1.1"
 description = "Models for storing and converting Sensor Data state"
 category = "main"
 optional = false
 python-versions = ">=3.9,<4.0"
 
 [package.extras]
-docs = ["sphinx-rtd-theme (>=1.0,<2.0)", "myst-parser (>=0.18,<0.19)", "Sphinx (>=5.0,<6.0)"]
+docs = ["Sphinx (>=5.0,<6.0)", "myst-parser (>=0.18,<0.19)", "sphinx-rtd-theme (>=1.0,<2.0)"]
 
 [[package]]
 name = "snowballstemmer"
@@ -622,7 +622,7 @@ docs = ["myst-parser", "Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "bae5b147faedca584f783479d35d285617ebc169c3a84237a84709b95da1bfe2"
+content-hash = "72d0410f567d0b43132cba3bd264b902fdb9f8bf8584dc8ec0d88c1ad59cfff6"
 
 [metadata.files]
 alabaster = []
