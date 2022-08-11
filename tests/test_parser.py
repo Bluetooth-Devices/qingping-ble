@@ -18,31 +18,44 @@ def test_can_create():
     QingpingBluetoothDeviceData()
 
 
-# No support for motion sensor yet
-# data = b"0X\x83\n\x02\xcd\xd5`4-X\x08"
-# data = b"0X\x83\n\x02\xcd\xd5`4-X\x08"
-# data = b"H\x12\xcd\xd5`4-X\x08\x04\x00-\x01\x00\x0f\x01\x8e"
-# data = b"H\x12\xcd\xd5`4-X\x08\x04\x00-\x01\x00\x0f\x01\x8e"
-# data = b"H\x12\xcd\xd5`4-X\x08\x04\x01-\x01\x00\x0f\x01\xb7"
+LIGHT_AND_MOTION = BluetoothServiceInfo(
+    name="Qingping Motion & Light",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"H\x12"
+        b"\xcd\xd5`4-X\x08\x04\x00\r\x00\x00\x0f\x01\xee"
+    },
+    source="local",
+)
+
+NO_VALID_DATA = BluetoothServiceInfo(
+    name="Qingping Motion & Light",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        # No valid data yet
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"0X\x83\n\x02\xcd\xd5`4-X\x08"
+    },
+    source="local",
+)
+
+
+def test_supported_set_the_title():
+    parser = QingpingBluetoothDeviceData()
+    parser.supported(NO_VALID_DATA) is False
+    parser.supported(LIGHT_AND_MOTION) is True
+    assert parser.title == "Motion & Light " "EEFF"
 
 
 def test_motion_and_light_signal_only():
     parser = QingpingBluetoothDeviceData()
-    service_info = BluetoothServiceInfo(
-        name="Qingping Motion & Light",
-        manufacturer_data={},
-        service_uuids=[],
-        address="aa:bb:cc:dd:ee:ff",
-        rssi=-60,
-        service_data={
-            "0000fdcd-0000-1000-8000-00805f9b34fb": b"H\x12"
-            b"\xcd\xd5`4-X\x08\x04\x00\r\x00\x00\x0f\x01\xee"
-        },
-        source="local",
-    )
-    result = parser.update(service_info)
-    assert result == SensorUpdate(
-        title=None,
+    assert parser.update(LIGHT_AND_MOTION) == SensorUpdate(
+        title="Motion & Light EEFF",
         devices={
             None: SensorDeviceInfo(
                 name="Motion & Light " "EEFF",
@@ -108,7 +121,7 @@ def test_motion_and_light_battery_update():
     )
     result = parser.update(service_info)
     assert result == SensorUpdate(
-        title=None,
+        title="Motion & Light EEFF",
         devices={
             None: SensorDeviceInfo(
                 name="Motion & Light " "EEFF",
@@ -173,7 +186,7 @@ def test_has_motion():
     )
     result = parser.update(service_info)
     assert result == SensorUpdate(
-        title=None,
+        title="Motion & Light EEFF",
         devices={
             None: SensorDeviceInfo(
                 name="Motion & Light " "EEFF",
