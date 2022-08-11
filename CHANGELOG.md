@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.2 (2022-08-11)
+### Fix
+* Duplicate names ([#4](https://github.com/Bluetooth-Devices/qingping-ble/issues/4)) ([`93e1b93`](https://github.com/Bluetooth-Devices/qingping-ble/commit/93e1b93e67887b481954fd29bd064fad4fa14a04))
+
 ## v0.2.1 (2022-08-11)
 ### Fix
 * Publication ([#3](https://github.com/Bluetooth-Devices/qingping-ble/issues/3)) ([`73e6a09`](https://github.com/Bluetooth-Devices/qingping-ble/commit/73e6a09dfe5480a889c6fac9dcf0933d6adda455))
