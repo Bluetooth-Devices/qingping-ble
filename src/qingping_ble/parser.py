@@ -57,6 +57,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
             if lower_name.startswith("qingping ")
             else service_info.name
         )
+        self.set_title(f"{name} {short_address(service_info.address)}")
         self.set_device_name(f"{name} {short_address(service_info.address)}")
         self.set_device_manufacturer("Qingping")
         self._process_update(data)
