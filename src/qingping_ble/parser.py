@@ -109,8 +109,12 @@ class QingpingBluetoothDeviceData(BluetoothData):
             )
         elif xdata_id == 0x12 and xdata_size == 4:
             (pm2_5, pm10) = unpack("<HH", xdata)
-            self.update_predefined_sensor(SensorLibrary.PM25, pm2_5)
-            self.update_predefined_sensor(SensorLibrary.PM10, pm10)
+            self.update_predefined_sensor(
+                SensorLibrary.PM25__CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, pm2_5
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.PM10__CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, pm10
+            )
         elif xdata_id == 0x13 and xdata_size == 2:
             co2 = unpack("<H", xdata)[0]  # noqa: F841
             self.update_predefined_sensor(
