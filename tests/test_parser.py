@@ -31,6 +31,7 @@ LIGHT_AND_MOTION = BluetoothServiceInfo(
     source="local",
 )
 
+
 ALARM_CLOCK = BluetoothServiceInfo(
     name="Qingping Alarm Clock",
     manufacturer_data={},
@@ -44,6 +45,20 @@ ALARM_CLOCK = BluetoothServiceInfo(
     source="local",
 )
 
+
+AIR_MONITOR = BluetoothServiceInfo(
+    name="Qingping Air Monitor Lite",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x88\x0e\xd6\x88\x8f\xe6"
+        b"HT\x01\x04\x03\x01\x16"
+        b"\x02\x12\x04\x02\x00\x02\x00\x13\x02%\x02"
+    },
+    source="local",
+)
 
 NO_VALID_DATA = BluetoothServiceInfo(
     name="Qingping Motion & Light",
@@ -306,6 +321,89 @@ def test_alarm_clock():
                 device_key=DeviceKey(key="battery", device_id=None),
                 name="Battery",
                 native_value=100,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_air_monitor():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(AIR_MONITOR)
+    assert parsed == SensorUpdate(
+        title="Air Monitor Lite EEFF",
+        devices={
+            None: SensorDeviceInfo(
+                name="Air Monitor Lite EEFF",
+                model="CGDN1",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="pm25", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="pm25", device_id=None),
+                device_class=SensorDeviceClass.PM25,
+                native_unit_of_measurement=Units.CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="carbon_dioxide", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="carbon_dioxide", device_id=None),
+                device_class=SensorDeviceClass.CO2,
+                native_unit_of_measurement=Units.CONCENTRATION_PARTS_PER_MILLION,
+            ),
+            DeviceKey(key="pm10", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="pm10", device_id=None),
+                device_class=SensorDeviceClass.PM10,
+                native_unit_of_measurement=Units.CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="pm25", device_id=None): SensorValue(
+                device_key=DeviceKey(key="pm25", device_id=None),
+                name="Pm25",
+                native_value=2,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=25.9,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=53.4,
+            ),
+            DeviceKey(key="carbon_dioxide", device_id=None): SensorValue(
+                device_key=DeviceKey(key="carbon_dioxide", device_id=None),
+                name="Carbon " "Dioxide",
+                native_value=549,
+            ),
+            DeviceKey(key="pm10", device_id=None): SensorValue(
+                device_key=DeviceKey(key="pm10", device_id=None),
+                name="Pm10",
+                native_value=2,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal " "Strength",
+                native_value=-60,
             ),
         },
         binary_entity_descriptions={},
