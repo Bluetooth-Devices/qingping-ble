@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.4 (2022-08-18)
+### Fix
+* Add air monitor tests ([#9](https://github.com/Bluetooth-Devices/qingping-ble/issues/9)) ([`5688b4c`](https://github.com/Bluetooth-Devices/qingping-ble/commit/5688b4c3a6ae6117d94c54d4ee307e7323ba3fa5))
+* Pm names ([#8](https://github.com/Bluetooth-Devices/qingping-ble/issues/8)) ([`570208f`](https://github.com/Bluetooth-Devices/qingping-ble/commit/570208f3424103b1c3850ab20258a734b0167ae8))
+
 ## v0.2.3 (2022-08-11)
 ### Fix
 * Setting title ([#5](https://github.com/Bluetooth-Devices/qingping-ble/issues/5)) ([`0fc0a92`](https://github.com/Bluetooth-Devices/qingping-ble/commit/0fc0a929b6cd29bb593f0b693470e4dd8b30dbe0))
