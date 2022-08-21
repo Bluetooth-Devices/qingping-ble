@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.0 (2022-08-21)
+### Feature
+* Add BT Clock Lite ([#11](https://github.com/Bluetooth-Devices/qingping-ble/issues/11)) ([`a0fcedf`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a0fcedf8670c34d0893726bdc3e8f3b781cd8d60))
+
 ## v0.2.4 (2022-08-18)
 ### Fix
 * Add air monitor tests ([#9](https://github.com/Bluetooth-Devices/qingping-ble/issues/9)) ([`5688b4c`](https://github.com/Bluetooth-Devices/qingping-ble/commit/5688b4c3a6ae6117d94c54d4ee307e7323ba3fa5))
