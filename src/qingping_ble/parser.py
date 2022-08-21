@@ -21,6 +21,7 @@ DEVICE_TYPES = {
     0x07: "CGG1",
     0x09: "CGP1W",
     0x12: "CGPR1",
+    0x1E: "CGC1",  # Clock Lite
     0x0C: "CGD1",
     0x0E: "CGDN1",
 }
@@ -48,8 +49,8 @@ class QingpingBluetoothDeviceData(BluetoothData):
         unpadded_data = service_info.service_data[SERVICE_DATA_UUID]
         data = b"\x00\x00\x00\x00" + unpadded_data
         device_id = data[5]
-        if device_id := DEVICE_TYPES.get(device_id):
-            self.set_device_type(device_id)
+        if device_type := DEVICE_TYPES.get(device_id):
+            self.set_device_type(device_type)
         else:
             return
         name = (
