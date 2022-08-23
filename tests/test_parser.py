@@ -1,3 +1,4 @@
+import pytest
 from bluetooth_sensor_state_data import BluetoothServiceInfo, SensorUpdate
 from sensor_state_data import (
     BinarySensorDescription,
@@ -101,6 +102,31 @@ NO_VALID_DATA = BluetoothServiceInfo(
 
 LEES_GUITARS = BluetoothServiceInfo(
     name="Lee Guitars Thermo-Hygrometer",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x8a\x0f\xd1,c4-X\x01\x04\x00\x01\x12\x02\x02\x01("
+    },
+    source="local",
+)
+
+
+LEES_GUITARS_PASSIVE = BluetoothServiceInfo(
+    name="",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x8a\x0f\xd1,c4-X\x01\x04\x00\x01\x12\x02\x02\x01("
+    },
+    source="local",
+)
+
+LEES_GUITARS_PASSIVE_ADDR = BluetoothServiceInfo(
+    name="aa:bb:cc:dd:ee:ff",
     manufacturer_data={},
     service_uuids=[],
     address="aa:bb:cc:dd:ee:ff",
@@ -518,35 +544,38 @@ def test_clock_lite():
     )
 
 
-def test_lees_gutairs():
+@pytest.mark.parametrize(
+    "adv", [LEES_GUITARS_PASSIVE, LEES_GUITARS, LEES_GUITARS_PASSIVE_ADDR]
+)
+def test_lees_gutairs(adv):
     parser = QingpingBluetoothDeviceData()
-    parsed = parser.update(LEES_GUITARS)
+    parsed = parser.update(adv)
     assert parsed == SensorUpdate(
-        title="BT Clock Lite EEFF",
+        title="Lee Guitars Thermo-Hygrometer EEFF",
         devices={
             None: SensorDeviceInfo(
-                name="BT Clock Lite EEFF",
-                model="CGC1",
+                name="Lee Guitars " "Thermo-Hygrometer EEFF",
+                model="CGM1",
                 manufacturer="Qingping",
                 sw_version=None,
                 hw_version=None,
             )
         },
         entity_descriptions={
-            DeviceKey(key="temperature", device_id=None): SensorDescription(
-                device_key=DeviceKey(key="temperature", device_id=None),
-                device_class=SensorDeviceClass.TEMPERATURE,
-                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
             ),
             DeviceKey(key="battery", device_id=None): SensorDescription(
                 device_key=DeviceKey(key="battery", device_id=None),
                 device_class=SensorDeviceClass.BATTERY,
                 native_unit_of_measurement=Units.PERCENTAGE,
             ),
-            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
-                device_key=DeviceKey(key="signal_strength", device_id=None),
-                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
-                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
             ),
             DeviceKey(key="humidity", device_id=None): SensorDescription(
                 device_key=DeviceKey(key="humidity", device_id=None),
@@ -555,25 +584,25 @@ def test_lees_gutairs():
             ),
         },
         entity_values={
-            DeviceKey(key="temperature", device_id=None): SensorValue(
-                device_key=DeviceKey(key="temperature", device_id=None),
-                name="Temperature",
-                native_value=31.0,
-            ),
-            DeviceKey(key="battery", device_id=None): SensorValue(
-                device_key=DeviceKey(key="battery", device_id=None),
-                name="Battery",
-                native_value=100,
-            ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
                 name="Signal " "Strength",
                 native_value=-60,
             ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=40,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=25.6,
+            ),
             DeviceKey(key="humidity", device_id=None): SensorValue(
                 device_key=DeviceKey(key="humidity", device_id=None),
                 name="Humidity",
-                native_value=46.0,
+                native_value=53.0,
             ),
         },
         binary_entity_descriptions={},
