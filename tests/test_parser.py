@@ -31,6 +31,18 @@ LIGHT_AND_MOTION = BluetoothServiceInfo(
     source="local",
 )
 
+MOTION_AND_LIGHT_ENSURE_SUPPORTED = BluetoothServiceInfo(
+    name="Qingping Motion & Light",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"H\x12\xcd\xd5`4-X\x08\x04\x01\xe8\x00\x00\x0f\x01{"
+    },
+    source="local",
+)
+
 
 ALARM_CLOCK = BluetoothServiceInfo(
     name="Qingping Alarm Clock",
@@ -85,6 +97,25 @@ NO_VALID_DATA = BluetoothServiceInfo(
     },
     source="local",
 )
+
+
+LEES_GUITARS = BluetoothServiceInfo(
+    name="Lee Guitars Thermo-Hygrometer",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x8a\x0f\xd1,c4-X\x01\x04\x00\x01\x12\x02\x02\x01("
+    },
+    source="local",
+)
+
+
+def test_supported_motion_and_light():
+    parser = QingpingBluetoothDeviceData()
+    parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
+    assert parser.title == "Motion & Light " "EEFF"
 
 
 def test_supported_set_the_title():
@@ -427,9 +458,69 @@ def test_air_monitor():
 def test_clock_lite():
     parser = QingpingBluetoothDeviceData()
     parsed = parser.update(CLOCK_LITE)
-    import pprint
+    assert parsed == SensorUpdate(
+        title="BT Clock Lite EEFF",
+        devices={
+            None: SensorDeviceInfo(
+                name="BT Clock Lite EEFF",
+                model="CGC1",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="battery", device_id=None),
+                device_class=SensorDeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=31.0,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=100,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal " "Strength",
+                native_value=-60,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=46.0,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
 
-    pprint.pprint(parsed)
+
+def test_lees_gutairs():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(LEES_GUITARS)
     assert parsed == SensorUpdate(
         title="BT Clock Lite EEFF",
         devices={
