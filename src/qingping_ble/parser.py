@@ -24,6 +24,7 @@ DEVICE_TYPES = {
     0x1E: "CGC1",  # Clock Lite
     0x0C: "CGD1",
     0x0E: "CGDN1",
+    0x04: "CGH1",  # Door/Window Sensor
 }
 
 SERVICE_DATA_UUID = "0000fdcd-0000-1000-8000-00805f9b34fb"
@@ -99,6 +100,11 @@ class QingpingBluetoothDeviceData(BluetoothData):
             )
             self.update_predefined_sensor(
                 SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + illuminance_2
+            )
+        elif xdata_id == 0x04 and xdata_size == 1:
+            closed = unpack("B", xdata)[0]
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.DOOR, not bool(closed)
             )
         elif xdata_id == 0x09 and xdata_size == 4:
             illuminance = unpack("<I", xdata)[0]
