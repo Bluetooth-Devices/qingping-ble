@@ -138,6 +138,19 @@ LEES_GUITARS_PASSIVE_ADDR = BluetoothServiceInfo(
 )
 
 
+QINGPING_DOOR_WINDOW = BluetoothServiceInfo(
+    name="Qingping Door/Window Sensor",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fe95-0000-1000-8000-00805f9b34fb": b"\xc8\x04M:@4-X\x04\x01\x01\x0f\x01\xef"
+    },
+    source="local",
+)
+
+
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
     parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
@@ -608,3 +621,12 @@ def test_lees_gutairs(adv):
         binary_entity_descriptions={},
         binary_entity_values={},
     )
+
+
+def test_door_window():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(QINGPING_DOOR_WINDOW)
+    import pprint
+
+    pprint.pprint(parsed)
+    assert parsed == "TODO"
