@@ -27,7 +27,7 @@ class QingpingDevice:
 
 DEVICE_TYPES = {
     0x01: QingpingDevice("CGG1", ""),
-    0x04: QingpingDevice("CGH1", "Door/Window Sensor") # Door/Window Sensor
+    0x04: QingpingDevice("CGH1", "Door/Window Sensor"),  # Door/Window Sensor
     0x07: QingpingDevice("CGG1", ""),
     0x09: QingpingDevice("CGP1W", ""),
     0x12: QingpingDevice("CGPR1", "Motion & Light"),
