@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2022-08-24)
+### Feature
+* Add support for CGH1 Door/Window sensor ([#14](https://github.com/Bluetooth-Devices/qingping-ble/issues/14)) ([`c231a1d`](https://github.com/Bluetooth-Devices/qingping-ble/commit/c231a1d21ce975374f5bec8f0812250ae7f36a3e))
+
 ## v0.4.0 (2022-08-24)
 ### Feature
 * Add support for Lee Guitars Thermo-Hygrometer and passive ([#12](https://github.com/Bluetooth-Devices/qingping-ble/issues/12)) ([`1d02826`](https://github.com/Bluetooth-Devices/qingping-ble/commit/1d028267bf8c441d7e64a0b671d7d2b5444b62ac))
