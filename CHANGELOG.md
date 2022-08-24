@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.0 (2022-08-24)
+### Feature
+* Add support for the Qingping Temp RH M ([#15](https://github.com/Bluetooth-Devices/qingping-ble/issues/15)) ([`a100a07`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a100a079b77c3a196a72c75a9ff1811347dc974b))
+
 ## v0.5.0 (2022-08-24)
 ### Feature
 * Add support for CGH1 Door/Window sensor ([#14](https://github.com/Bluetooth-Devices/qingping-ble/issues/14)) ([`c231a1d`](https://github.com/Bluetooth-Devices/qingping-ble/commit/c231a1d21ce975374f5bec8f0812250ae7f36a3e))
