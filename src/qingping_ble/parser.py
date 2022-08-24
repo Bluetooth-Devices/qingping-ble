@@ -27,6 +27,7 @@ class QingpingDevice:
 
 DEVICE_TYPES = {
     0x01: QingpingDevice("CGG1", ""),
+    0x04: QingpingDevice("CGH1", "Door/Window Sensor"),  # Door/Window Sensor
     0x07: QingpingDevice("CGG1", ""),
     0x09: QingpingDevice("CGP1W", ""),
     0x12: QingpingDevice("CGPR1", "Motion & Light"),
@@ -110,6 +111,11 @@ class QingpingBluetoothDeviceData(BluetoothData):
             )
             self.update_predefined_sensor(
                 SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + illuminance_2
+            )
+        elif xdata_id == 0x04 and xdata_size == 1:
+            closed = unpack("B", xdata)[0]
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.DOOR, not bool(closed)
             )
         elif xdata_id == 0x09 and xdata_size == 4:
             illuminance = unpack("<I", xdata)[0]

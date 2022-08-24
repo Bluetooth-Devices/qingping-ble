@@ -138,6 +138,19 @@ LEES_GUITARS_PASSIVE_ADDR = BluetoothServiceInfo(
 )
 
 
+QINGPING_DOOR_WINDOW = BluetoothServiceInfo(
+    name="Qingping Door/Window Sensor",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\xc8\x04M:@4-X\x04\x01\x01\x0f\x01\xef"
+    },
+    source="local",
+)
+
+
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
     parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
@@ -607,4 +620,48 @@ def test_lees_gutairs(adv):
         },
         binary_entity_descriptions={},
         binary_entity_values={},
+    )
+
+
+def test_door_window():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(QINGPING_DOOR_WINDOW)
+    assert parsed == SensorUpdate(
+        title="Door/Window Sensor EEFF",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door/Window Sensor EEFF",
+                model="CGH1",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            )
+        },
+        entity_values={
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal " "Strength",
+                native_value=-60,
+            )
+        },
+        binary_entity_descriptions={
+            DeviceKey(key="door", device_id=None): BinarySensorDescription(
+                device_key=DeviceKey(key="door", device_id=None),
+                device_class=BinarySensorDeviceClass.DOOR,
+            )
+        },
+        binary_entity_values={
+            DeviceKey(key="door", device_id=None): BinarySensorValue(
+                device_key=DeviceKey(key="door", device_id=None),
+                name="Door",
+                native_value=False,
+            )
+        },
     )
