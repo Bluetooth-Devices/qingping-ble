@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.0 (2022-08-24)
+### Feature
+* Add support for Lee Guitars Thermo-Hygrometer and passive ([#12](https://github.com/Bluetooth-Devices/qingping-ble/issues/12)) ([`1d02826`](https://github.com/Bluetooth-Devices/qingping-ble/commit/1d028267bf8c441d7e64a0b671d7d2b5444b62ac))
+
 ## v0.3.0 (2022-08-21)
 ### Feature
 * Add BT Clock Lite ([#11](https://github.com/Bluetooth-Devices/qingping-ble/issues/11)) ([`a0fcedf`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a0fcedf8670c34d0893726bdc3e8f3b781cd8d60))
