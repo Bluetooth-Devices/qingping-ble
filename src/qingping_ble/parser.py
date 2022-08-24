@@ -30,6 +30,7 @@ DEVICE_TYPES = {
     0x04: QingpingDevice("CGH1", "Door/Window Sensor"),  # Door/Window Sensor
     0x07: QingpingDevice("CGG1", ""),
     0x09: QingpingDevice("CGP1W", ""),
+    0x16: QingpingDevice("CGG1", "Qingping Temp RH M"),
     0x12: QingpingDevice("CGPR1", "Motion & Light"),
     0x1E: QingpingDevice("CGC1", "BT Clock Lite"),
     0x0C: QingpingDevice("CGD1", "Alarm Clock"),
@@ -59,9 +60,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
         unpadded_data = service_info.service_data[SERVICE_DATA_UUID]
         data = b"\x00\x00\x00\x00" + unpadded_data
         device_id = data[5]
-        if device := DEVICE_TYPES.get(device_id):
-            self.set_device_type(device.model)
-        else:
+        if not (device := DEVICE_TYPES.get(device_id)):
             _LOGGER.debug("Device type %s is not supported", device_id)
             return
         if device.name:
@@ -70,6 +69,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
             name = service_info.name[9:]
         else:
             name = service_info.name
+        self.set_device_type(device.model)
         self.set_title(f"{name} {short_address(service_info.address)}")
         self.set_device_name(f"{name} {short_address(service_info.address)}")
         self.set_device_manufacturer("Qingping")
