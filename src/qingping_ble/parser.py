@@ -8,6 +8,7 @@ MIT License applies.
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from struct import unpack
 
 from bluetooth_sensor_state_data import BluetoothData
@@ -16,15 +17,25 @@ from sensor_state_data import BinarySensorDeviceClass, SensorLibrary
 
 _LOGGER = logging.getLogger(__name__)
 
+
+@dataclass
+class QingpingDevice:
+
+    model: str
+    name: str
+
+
 DEVICE_TYPES = {
-    0x01: "CGG1",
-    0x07: "CGG1",
-    0x09: "CGP1W",
-    0x12: "CGPR1",
-    0x1E: "CGC1",  # Clock Lite
-    0x0C: "CGD1",
-    0x0E: "CGDN1",
+    0x01: QingpingDevice("CGG1", ""),
+    0x07: QingpingDevice("CGG1", ""),
+    0x09: QingpingDevice("CGP1W", ""),
+    0x12: QingpingDevice("CGPR1", "Motion & Light"),
+    0x1E: QingpingDevice("CGC1", "BT Clock Lite"),
+    0x0C: QingpingDevice("CGD1", "Alarm Clock"),
+    0x0E: QingpingDevice("CGDN1", "Air Monitor Lite"),
+    0x0F: QingpingDevice("CGM1", "Lee Guitars Thermo-Hygrometer"),
 }
+
 
 SERVICE_DATA_UUID = "0000fdcd-0000-1000-8000-00805f9b34fb"
 
@@ -42,22 +53,22 @@ class QingpingBluetoothDeviceData(BluetoothData):
         """Update from BLE advertisement data."""
         _LOGGER.debug("Parsing qingping BLE advertisement data: %s", service_info)
         lower_name = service_info.name.lower()
-        if "qingping" not in lower_name:
-            return
         if SERVICE_DATA_UUID not in service_info.service_data:
             return
         unpadded_data = service_info.service_data[SERVICE_DATA_UUID]
         data = b"\x00\x00\x00\x00" + unpadded_data
         device_id = data[5]
-        if device_type := DEVICE_TYPES.get(device_id):
-            self.set_device_type(device_type)
+        if device := DEVICE_TYPES.get(device_id):
+            self.set_device_type(device.model)
         else:
+            _LOGGER.debug("Device type %s is not supported", device_id)
             return
-        name = (
-            service_info.name[9:]
-            if lower_name.startswith("qingping ")
-            else service_info.name
-        )
+        if device.name:
+            name = device.name
+        elif lower_name.startswith("qingping "):
+            name = service_info.name[9:]
+        else:
+            name = service_info.name
         self.set_title(f"{name} {short_address(service_info.address)}")
         self.set_device_name(f"{name} {short_address(service_info.address)}")
         self.set_device_manufacturer("Qingping")
