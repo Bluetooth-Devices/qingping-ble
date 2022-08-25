@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.1 (2022-08-25)
+### Fix
+* Use bluetooth_data_tools for short_address ([#16](https://github.com/Bluetooth-Devices/qingping-ble/issues/16)) ([`a2f36d1`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a2f36d1ff042ef0290f9c3faadfa4351ef493d39))
+
 ## v0.6.0 (2022-08-24)
 ### Feature
 * Add support for the Qingping Temp RH M ([#15](https://github.com/Bluetooth-Devices/qingping-ble/issues/15)) ([`a100a07`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a100a079b77c3a196a72c75a9ff1811347dc974b))
