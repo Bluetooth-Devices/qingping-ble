@@ -23,10 +23,10 @@ optional = false
 python-versions = ">=3.5"
 
 [package.extras]
-dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "zope.interface", "furo", "sphinx", "sphinx-notfound-page", "pre-commit", "cloudpickle"]
-docs = ["furo", "sphinx", "zope.interface", "sphinx-notfound-page"]
-tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "zope.interface", "cloudpickle"]
-tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
+tests_no_zope = ["cloudpickle", "pytest-mypy-plugins", "mypy (>=0.900,!=0.940)", "pytest (>=4.3.0)", "pympler", "hypothesis", "coverage[toml] (>=5.0.2)"]
+tests = ["cloudpickle", "zope.interface", "pytest-mypy-plugins", "mypy (>=0.900,!=0.940)", "pytest (>=4.3.0)", "pympler", "hypothesis", "coverage[toml] (>=5.0.2)"]
+docs = ["sphinx-notfound-page", "zope.interface", "sphinx", "furo"]
+dev = ["cloudpickle", "pre-commit", "sphinx-notfound-page", "sphinx", "furo", "zope.interface", "pytest-mypy-plugins", "mypy (>=0.900,!=0.940)", "pytest (>=4.3.0)", "pympler", "hypothesis", "coverage[toml] (>=5.0.2)"]
 
 [[package]]
 name = "babel"
@@ -62,6 +62,17 @@ description = "Python WinRT bindings for Bleak"
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "bluetooth-data-tools"
+version = "0.1.2"
+description = "Tools for converting bluetooth data and packets"
+category = "main"
+optional = false
+python-versions = ">=3.9,<4.0"
+
+[package.extras]
+docs = ["sphinx-rtd-theme (>=1.0,<2.0)", "myst-parser (>=0.18,<0.19)", "Sphinx (>=5.0,<6.0)"]
 
 [[package]]
 name = "bluetooth-sensor-state-data"
@@ -271,10 +282,10 @@ sphinx = ">=4,<6"
 typing-extensions = "*"
 
 [package.extras]
-code_style = ["pre-commit (>=2.12,<3.0)"]
+testing = ["sphinx-pytest", "pytest-param-files (>=0.3.4,<0.4.0)", "pytest-regressions", "pytest-cov", "pytest (>=6,<7)", "coverage", "beautifulsoup4"]
+rtd = ["sphinxext-opengraph (>=0.6.3,<0.7.0)", "sphinxcontrib.mermaid (>=0.7.1,<0.8.0)", "sphinxext-rediraffe (>=0.2.7,<0.3.0)", "sphinx-design", "sphinx-book-theme", "ipython"]
 linkify = ["linkify-it-py (>=1.0,<2.0)"]
-rtd = ["ipython", "sphinx-book-theme", "sphinx-design", "sphinxext-rediraffe (>=0.2.7,<0.3.0)", "sphinxcontrib.mermaid (>=0.7.1,<0.8.0)", "sphinxext-opengraph (>=0.6.3,<0.7.0)"]
-testing = ["beautifulsoup4", "coverage", "pytest (>=6,<7)", "pytest-cov", "pytest-regressions", "pytest-param-files (>=0.3.4,<0.4.0)", "sphinx-pytest"]
+code_style = ["pre-commit (>=2.12,<3.0)"]
 
 [[package]]
 name = "packaging"
@@ -600,9 +611,9 @@ optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
 
 [package.extras]
-brotli = ["brotlicffi (>=0.8.0)", "brotli (>=1.0.9)", "brotlipy (>=0.6.0)"]
-secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
+secure = ["ipaddress", "certifi", "idna (>=2.0.0)", "cryptography (>=1.3.4)", "pyOpenSSL (>=0.14)"]
+brotli = ["brotlipy (>=0.6.0)", "brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
 
 [[package]]
 name = "zipp"
@@ -622,7 +633,7 @@ docs = ["myst-parser", "Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "0a7445f265b6e07e124d29cd671a4e1f69fd3124dd5d3a6078c47afb68dec2f6"
+content-hash = "719ccca8c73144edb1b7ba8d004d8adf17bc741d9ef54866f7d9a31b9b087975"
 
 [metadata.files]
 alabaster = []
@@ -631,6 +642,7 @@ attrs = []
 babel = []
 bleak = []
 bleak-winrt = []
+bluetooth-data-tools = []
 bluetooth-sensor-state-data = []
 certifi = []
 charset-normalizer = []
