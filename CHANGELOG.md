@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.0 (2022-09-16)
+### Feature
+* Add support for CGDN1 alternative device type ([#18](https://github.com/Bluetooth-Devices/qingping-ble/issues/18)) ([`ab78277`](https://github.com/Bluetooth-Devices/qingping-ble/commit/ab782774b31f993e5ffe2f79c6f718141ed784a3))
+
 ## v0.6.1 (2022-08-25)
 ### Fix
 * Use bluetooth_data_tools for short_address ([#16](https://github.com/Bluetooth-Devices/qingping-ble/issues/16)) ([`a2f36d1`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a2f36d1ff042ef0290f9c3faadfa4351ef493d39))
