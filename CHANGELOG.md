@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.0 (2022-10-16)
+### Feature
+* Add support for temp rh pro e ([#19](https://github.com/Bluetooth-Devices/qingping-ble/issues/19)) ([`7c7c9af`](https://github.com/Bluetooth-Devices/qingping-ble/commit/7c7c9af770f8c83e091250bd7bb80bb8d67e5cf3))
+
 ## v0.7.0 (2022-09-16)
 ### Feature
 * Add support for CGDN1 alternative device type ([#18](https://github.com/Bluetooth-Devices/qingping-ble/issues/18)) ([`ab78277`](https://github.com/Bluetooth-Devices/qingping-ble/commit/ab782774b31f993e5ffe2f79c6f718141ed784a3))
