@@ -176,6 +176,18 @@ QINGPING_TEMP_RH_M = BluetoothServiceInfo(
     source="local",
 )
 
+QINGPING_TEMP_RH_PRO_E = BluetoothServiceInfo(
+    name="Qingping Temp RH Pro E",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x15\x01'@4-X\x01\x04\xde\x00\xe9\x01\x02\x01d"
+    },
+    source="local",
+)
+
 
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
@@ -780,10 +792,10 @@ def test_temp_rh_m():
     parser = QingpingBluetoothDeviceData()
     parsed = parser.update(QINGPING_TEMP_RH_M)
     assert parsed == SensorUpdate(
-        title="Qingping Temp RH M EEFF",
+        title="Temp RH M EEFF",
         devices={
             None: SensorDeviceInfo(
-                name="Qingping Temp RH M EEFF",
+                name="Temp RH M EEFF",
                 model="CGG1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -832,6 +844,69 @@ def test_temp_rh_m():
                 device_key=DeviceKey(key="signal_strength", device_id=None),
                 name="Signal " "Strength",
                 native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_temp_rh_pro_e():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(QINGPING_TEMP_RH_PRO_E)
+    assert parsed == SensorUpdate(
+        title="Temp RH Pro E EEFF",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temp RH Pro E EEFF",
+                model="CGF1W",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="battery", device_id=None),
+                device_class=SensorDeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=48.9,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=22.2,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal " "Strength",
+                native_value=-60,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=100,
             ),
         },
         binary_entity_descriptions={},

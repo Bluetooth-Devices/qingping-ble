@@ -31,7 +31,8 @@ DEVICE_TYPES = {
     0x04: QingpingDevice("CGH1", "Door/Window Sensor"),  # Door/Window Sensor
     0x07: QingpingDevice("CGG1", ""),
     0x09: QingpingDevice("CGP1W", ""),
-    0x16: QingpingDevice("CGG1", "Qingping Temp RH M"),
+    0x15: QingpingDevice("CGF1W", "Temp RH Pro E"),
+    0x16: QingpingDevice("CGG1", "Temp RH M"),
     0x12: QingpingDevice("CGPR1", "Motion & Light"),
     0x1E: QingpingDevice("CGC1", "BT Clock Lite"),
     0x0C: QingpingDevice("CGD1", "Alarm Clock"),
@@ -56,6 +57,9 @@ class QingpingBluetoothDeviceData(BluetoothData):
         unpadded_data = service_info.service_data[SERVICE_DATA_UUID]
         data = b"\x00\x00\x00\x00" + unpadded_data
         device_id = data[5]
+        import pprint
+
+        pprint.pprint(["device_id", device_id])
         if not (device := DEVICE_TYPES.get(device_id)):
             _LOGGER.debug("Device type %s is not supported", device_id)
             return
