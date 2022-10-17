@@ -57,9 +57,6 @@ class QingpingBluetoothDeviceData(BluetoothData):
         unpadded_data = service_info.service_data[SERVICE_DATA_UUID]
         data = b"\x00\x00\x00\x00" + unpadded_data
         device_id = data[5]
-        import pprint
-
-        pprint.pprint(["device_id", device_id])
         if not (device := DEVICE_TYPES.get(device_id)):
             _LOGGER.debug("Device type %s is not supported", device_id)
             return
