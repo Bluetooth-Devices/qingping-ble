@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.1 (2022-10-17)
+### Fix
+* Remove leftover debug lines ([#20](https://github.com/Bluetooth-Devices/qingping-ble/issues/20)) ([`9cba262`](https://github.com/Bluetooth-Devices/qingping-ble/commit/9cba2625fb78afe5cd27c3d91c281dff7c414151))
+
 ## v0.8.0 (2022-10-16)
 ### Feature
 * Add support for temp rh pro e ([#19](https://github.com/Bluetooth-Devices/qingping-ble/issues/19)) ([`7c7c9af`](https://github.com/Bluetooth-Devices/qingping-ble/commit/7c7c9af770f8c83e091250bd7bb80bb8d67e5cf3))
