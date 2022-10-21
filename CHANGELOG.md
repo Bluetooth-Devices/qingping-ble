@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.2 (2022-10-21)
+### Fix
+* Handle door left open notifications ([#21](https://github.com/Bluetooth-Devices/qingping-ble/issues/21)) ([`a10fe7f`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a10fe7f42b8fad9ede516701130d8e82fe86709f))
+
 ## v0.8.1 (2022-10-17)
 ### Fix
 * Remove leftover debug lines ([#20](https://github.com/Bluetooth-Devices/qingping-ble/issues/20)) ([`9cba262`](https://github.com/Bluetooth-Devices/qingping-ble/commit/9cba2625fb78afe5cd27c3d91c281dff7c414151))
