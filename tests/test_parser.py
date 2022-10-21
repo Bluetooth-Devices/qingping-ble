@@ -776,15 +776,27 @@ def test_door_window():
             DeviceKey(key="door", device_id=None): BinarySensorDescription(
                 device_key=DeviceKey(key="door", device_id=None),
                 device_class=BinarySensorDeviceClass.DOOR,
-            )
+            ),
+            DeviceKey(
+                key=(None, "door_left_open"), device_id=None
+            ): BinarySensorDescription(
+                device_key=DeviceKey(key=(None, "door_left_open"), device_id=None),
+                device_class=BinarySensorDeviceClass.PROBLEM,
+            ),
         },
         binary_entity_values={
             DeviceKey(key="door", device_id=None): BinarySensorValue(
                 device_key=DeviceKey(key="door", device_id=None),
                 name="Door",
                 native_value=False,
-            )
+            ),
+            DeviceKey(key=(None, "door_left_open"), device_id=None): BinarySensorValue(
+                device_key=DeviceKey(key=(None, "door_left_open"), device_id=None),
+                name="Door " "left " "open",
+                native_value=False,
+            ),
         },
+        events={},
     )
 
 
