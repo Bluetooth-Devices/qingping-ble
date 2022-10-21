@@ -112,7 +112,13 @@ class QingpingBluetoothDeviceData(BluetoothData):
         elif xdata_id == 0x04 and xdata_size == 1:
             closed = unpack("B", xdata)[0]
             self.update_predefined_binary_sensor(
-                BinarySensorDeviceClass.DOOR, not bool(closed)
+                BinarySensorDeviceClass.DOOR, closed in (0, 2)
+            )
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.PROBLEM,
+                closed == 2,  # left open
+                key=(None, "door_left_open"),
+                name="Door left open",
             )
         elif xdata_id == 0x09 and xdata_size == 4:
             illuminance = unpack("<I", xdata)[0]
