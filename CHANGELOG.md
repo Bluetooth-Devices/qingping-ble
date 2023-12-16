@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.0 (2023-12-16)
+
+### Feature
+
+* Add support for cgp23w ([#24](https://github.com/Bluetooth-Devices/qingping-ble/issues/24)) ([`ac9fa97`](https://github.com/Bluetooth-Devices/qingping-ble/commit/ac9fa971aa3f259d7f896dcc7e03202aaef7be1e))
+
 ## v0.8.2 (2022-10-21)
 ### Fix
 * Handle door left open notifications ([#21](https://github.com/Bluetooth-Devices/qingping-ble/issues/21)) ([`a10fe7f`](https://github.com/Bluetooth-Devices/qingping-ble/commit/a10fe7f42b8fad9ede516701130d8e82fe86709f))
