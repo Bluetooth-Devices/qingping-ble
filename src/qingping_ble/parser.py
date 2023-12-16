@@ -31,14 +31,15 @@ DEVICE_TYPES = {
     0x04: QingpingDevice("CGH1", "Door/Window Sensor"),  # Door/Window Sensor
     0x07: QingpingDevice("CGG1", ""),
     0x09: QingpingDevice("CGP1W", ""),
-    0x15: QingpingDevice("CGF1W", "Temp RH Pro E"),
-    0x16: QingpingDevice("CGG1", "Temp RH M"),
-    0x12: QingpingDevice("CGPR1", "Motion & Light"),
-    0x1E: QingpingDevice("CGC1", "BT Clock Lite"),
     0x0C: QingpingDevice("CGD1", "Alarm Clock"),
     0x0E: QingpingDevice("CGDN1", "Air Monitor Lite"),
-    0x24: QingpingDevice("CGDN1", "Air Monitor Lite"),
     0x0F: QingpingDevice("CGM1", "Lee Guitars Thermo-Hygrometer"),
+    0x12: QingpingDevice("CGPR1", "Motion & Light"),
+    0x15: QingpingDevice("CGF1W", "Temp RH Pro E"),
+    0x16: QingpingDevice("CGG1", "Temp RH M"),
+    0x18: QingpingDevice("CGP23W", "Temp & RH Monitor Pro"),
+    0x1E: QingpingDevice("CGC1", "BT Clock Lite"),
+    0x24: QingpingDevice("CGDN1", "Air Monitor Lite"),
 }
 
 
@@ -98,17 +99,6 @@ class QingpingBluetoothDeviceData(BluetoothData):
         elif xdata_id == 0x02 and xdata_size == 1:
             batt = unpack("B", xdata)[0]
             self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
-        elif xdata_id == 0x07 and xdata_size == 2:
-            pressure = unpack("<H", xdata)[0]
-            self.update_predefined_sensor(SensorLibrary.PRESSURE__MBAR, pressure / 10)
-        elif xdata_id == 0x08 and xdata_size == 4:
-            (motion, illuminance_1, illuminance_2) = unpack("<BHB", xdata)
-            self.update_predefined_binary_sensor(
-                BinarySensorDeviceClass.MOTION, bool(motion)
-            )
-            self.update_predefined_sensor(
-                SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + illuminance_2
-            )
         elif xdata_id == 0x04 and xdata_size == 1:
             closed = unpack("B", xdata)[0]
             self.update_predefined_binary_sensor(
@@ -119,6 +109,17 @@ class QingpingBluetoothDeviceData(BluetoothData):
                 closed == 2,  # left open
                 key=(None, "door_left_open"),
                 name="Door left open",
+            )
+        elif xdata_id == 0x07 and xdata_size == 2:
+            pressure = unpack("<H", xdata)[0]
+            self.update_predefined_sensor(SensorLibrary.PRESSURE__MBAR, pressure / 10)
+        elif xdata_id == 0x08 and xdata_size == 4:
+            (motion, illuminance_1, illuminance_2) = unpack("<BHB", xdata)
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.MOTION, bool(motion)
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + illuminance_2
             )
         elif xdata_id == 0x09 and xdata_size == 4:
             illuminance = unpack("<I", xdata)[0]
