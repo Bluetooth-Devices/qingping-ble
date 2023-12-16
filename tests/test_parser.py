@@ -189,6 +189,20 @@ QINGPING_TEMP_RH_PRO_E = BluetoothServiceInfo(
 )
 
 
+QINGPING_TEMP_RH_MONITOR_PRO = BluetoothServiceInfo(
+    name="Qingping Temp & RH Monitor Pro",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x88\x18\x07\x22\x40\x34\x2d\x58\x01\x04\x18\x01\xcd"
+        b"\x00\x02\x01\x61\x07\x02\x73\x27"
+    },
+    source="local",
+)
+
+
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
     parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
@@ -919,6 +933,79 @@ def test_temp_rh_pro_e():
                 device_key=DeviceKey(key="battery", device_id=None),
                 name="Battery",
                 native_value=100,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_temp_rh_monitor_pro():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(QINGPING_TEMP_RH_MONITOR_PRO)
+    assert parsed == SensorUpdate(
+        title="Temp & RH Monitor Pro EEFF",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temp & RH Monitor Pro EEFF",
+                model="CGP23W",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="pressure", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="pressure", device_id=None),
+                device_class=SensorDeviceClass.PRESSURE,
+                native_unit_of_measurement=Units.PRESSURE_MBAR,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="battery", device_id=None),
+                device_class=SensorDeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=20.5,
+            ),
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=28.0,
+            ),
+            DeviceKey(key="pressure", device_id=None): SensorValue(
+                device_key=DeviceKey(key="pressure", device_id=None),
+                name="Pressure",
+                native_value=1009.9,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal " "Strength",
+                native_value=-60,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=97,
             ),
         },
         binary_entity_descriptions={},
