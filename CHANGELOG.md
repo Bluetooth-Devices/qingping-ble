@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.10.0 (2024-01-21)
+
+### Feature
+
+* Add GCP22C support ([#26](https://github.com/Bluetooth-Devices/qingping-ble/issues/26)) ([`6cb3ed4`](https://github.com/Bluetooth-Devices/qingping-ble/commit/6cb3ed44a7d4f2d3d54d61c5968a1c5804d2887e))
+
 ## v0.9.0 (2023-12-16)
 
 ### Feature
