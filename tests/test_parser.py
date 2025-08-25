@@ -215,6 +215,21 @@ QINGPING_CO2_TEMP_RH = BluetoothServiceInfo(
     source="local",
 )
 
+# Real data from user's CGP22C with firmware 1.3.8
+QINGPING_CGP22C_REAL = BluetoothServiceInfo(
+    name="Qingping CO2 Temp RH",
+    manufacturer_data={},
+    service_uuids=[],
+    address="58:2D:34:86:1D:93",
+    rssi=-75,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": (
+            b"\n]\x93\x1d\x864-X\x01\x04\x17\x01\xce\x01\x02\x01d\x13\x02\xb3\x02"
+        )
+    },
+    source="10:B4:1D:16:30:A2",
+)
+
 
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
@@ -282,7 +297,7 @@ def test_motion_and_light_signal_only():
     )
 
 
-def test_motion_and_light_battery_update():
+def test_motion_and_light_battery_update() -> None:
     parser = QingpingBluetoothDeviceData()
     service_info = BluetoothServiceInfo(
         name="Qingping Motion & Light",
@@ -1034,7 +1049,7 @@ def test_co2_temp_rh():
         devices={
             None: SensorDeviceInfo(
                 name="CO2 Temp RH EEFF",
-                model="GCP22C",
+                model="CGP22C",
                 manufacturer="Qingping",
                 sw_version=None,
                 hw_version=None,
@@ -1092,6 +1107,80 @@ def test_co2_temp_rh():
                 device_key=DeviceKey(key="signal_strength", device_id=None),
                 name="Signal " "Strength",
                 native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_cgp22c_real_data() -> None:
+    """Test with real CGP22C data from user with firmware 1.3.8."""
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(QINGPING_CGP22C_REAL)
+    assert parsed == SensorUpdate(
+        title="CO2 Temp RH 1D93",
+        devices={
+            None: SensorDeviceInfo(
+                name="CO2 Temp RH 1D93",
+                model="CGP22C",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="battery", device_id=None),
+                device_class=SensorDeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="carbon_dioxide", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="carbon_dioxide", device_id=None),
+                device_class=SensorDeviceClass.CO2,
+                native_unit_of_measurement=Units.CONCENTRATION_PARTS_PER_MILLION,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=27.9,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=46.2,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=100,
+            ),
+            DeviceKey(key="carbon_dioxide", device_id=None): SensorValue(
+                device_key=DeviceKey(key="carbon_dioxide", device_id=None),
+                name="Carbon Dioxide",
+                native_value=691,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal Strength",
+                native_value=-75,
             ),
         },
         binary_entity_descriptions={},
