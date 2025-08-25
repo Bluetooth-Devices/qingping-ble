@@ -234,14 +234,14 @@ QINGPING_CGP22C_REAL = BluetoothServiceInfo(
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
     parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
-    assert parser.title == "Motion & Light " "EEFF"
+    assert parser.title == "Motion & Light EEFF"
 
 
 def test_supported_set_the_title():
     parser = QingpingBluetoothDeviceData()
     parser.supported(NO_VALID_DATA) is False
     parser.supported(LIGHT_AND_MOTION) is True
-    assert parser.title == "Motion & Light " "EEFF"
+    assert parser.title == "Motion & Light EEFF"
 
 
 def test_motion_and_light_signal_only():
@@ -250,7 +250,7 @@ def test_motion_and_light_signal_only():
         title="Motion & Light EEFF",
         devices={
             None: SensorDeviceInfo(
-                name="Motion & Light " "EEFF",
+                name="Motion & Light EEFF",
                 model="CGPR1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -277,7 +277,7 @@ def test_motion_and_light_signal_only():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
         },
@@ -316,7 +316,7 @@ def test_motion_and_light_battery_update() -> None:
         title="Motion & Light EEFF",
         devices={
             None: SensorDeviceInfo(
-                name="Motion & Light " "EEFF",
+                name="Motion & Light EEFF",
                 model="CGPR1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -353,7 +353,7 @@ def test_motion_and_light_battery_update() -> None:
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
         },
@@ -381,7 +381,7 @@ def test_has_motion():
         title="Motion & Light EEFF",
         devices={
             None: SensorDeviceInfo(
-                name="Motion & Light " "EEFF",
+                name="Motion & Light EEFF",
                 model="CGPR1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -403,7 +403,7 @@ def test_has_motion():
         entity_values={
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
             DeviceKey(key="illuminance", device_id=None): SensorValue(
@@ -467,7 +467,7 @@ def test_alarm_clock():
         entity_values={
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
             DeviceKey(key="humidity", device_id=None): SensorValue(
@@ -555,7 +555,7 @@ def test_air_monitor():
             ),
             DeviceKey(key="carbon_dioxide", device_id=None): SensorValue(
                 device_key=DeviceKey(key="carbon_dioxide", device_id=None),
-                name="Carbon " "Dioxide",
+                name="Carbon Dioxide",
                 native_value=549,
             ),
             DeviceKey(key="pm10", device_id=None): SensorValue(
@@ -565,7 +565,7 @@ def test_air_monitor():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
         },
@@ -633,7 +633,7 @@ def test_air_monitor_dev_type_36():
             ),
             DeviceKey(key="carbon_dioxide", device_id=None): SensorValue(
                 device_key=DeviceKey(key="carbon_dioxide", device_id=None),
-                name="Carbon " "Dioxide",
+                name="Carbon Dioxide",
                 native_value=609,
             ),
             DeviceKey(key="pm25", device_id=None): SensorValue(
@@ -648,7 +648,7 @@ def test_air_monitor_dev_type_36():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
         },
@@ -706,7 +706,7 @@ def test_clock_lite():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
             DeviceKey(key="humidity", device_id=None): SensorValue(
@@ -730,7 +730,7 @@ def test_lees_gutairs(adv):
         title="Lee Guitars Thermo-Hygrometer EEFF",
         devices={
             None: SensorDeviceInfo(
-                name="Lee Guitars " "Thermo-Hygrometer EEFF",
+                name="Lee Guitars Thermo-Hygrometer EEFF",
                 model="CGM1",
                 manufacturer="Qingping",
                 sw_version=None,
@@ -762,7 +762,7 @@ def test_lees_gutairs(adv):
         entity_values={
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
             DeviceKey(key="battery", device_id=None): SensorValue(
@@ -810,7 +810,7 @@ def test_door_window():
         entity_values={
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             )
         },
@@ -834,7 +834,7 @@ def test_door_window():
             ),
             DeviceKey(key=(None, "door_left_open"), device_id=None): BinarySensorValue(
                 device_key=DeviceKey(key=(None, "door_left_open"), device_id=None),
-                name="Door " "left " "open",
+                name="Door left open",
                 native_value=False,
             ),
         },
@@ -896,7 +896,7 @@ def test_temp_rh_m():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
         },
@@ -954,7 +954,7 @@ def test_temp_rh_pro_e():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
             DeviceKey(key="battery", device_id=None): SensorValue(
@@ -1027,7 +1027,7 @@ def test_temp_rh_monitor_pro():
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
             DeviceKey(key="battery", device_id=None): SensorValue(
@@ -1100,12 +1100,12 @@ def test_co2_temp_rh():
             ),
             DeviceKey(key="carbon_dioxide", device_id=None): SensorValue(
                 device_key=DeviceKey(key="carbon_dioxide", device_id=None),
-                name="Carbon " "Dioxide",
+                name="Carbon Dioxide",
                 native_value=655,
             ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
-                name="Signal " "Strength",
+                name="Signal Strength",
                 native_value=-60,
             ),
         },
