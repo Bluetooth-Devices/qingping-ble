@@ -19,15 +19,15 @@ from .parser import QingpingBluetoothDeviceData
 __version__ = "1.0.0"
 
 __all__ = [
-    "QingpingBluetoothDeviceData",
     "BinarySensorDeviceClass",
     "BinarySensorValue",
-    "SensorDescription",
-    "SensorDeviceInfo",
     "DeviceKey",
-    "SensorUpdate",
+    "QingpingBluetoothDeviceData",
+    "SensorDescription",
     "SensorDeviceClass",
     "SensorDeviceInfo",
+    "SensorDeviceInfo",
+    "SensorUpdate",
     "SensorValue",
     "Units",
 ]

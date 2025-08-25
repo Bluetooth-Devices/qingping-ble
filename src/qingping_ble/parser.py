@@ -1,4 +1,5 @@
-"""Parser for Qingping BLE advertisements.
+"""
+Parser for Qingping BLE advertisements.
 
 This file is shamelessly copied from the following repository:
 https://github.com/Ernst79/bleparser/blob/c42ae922e1abed2720c7fac993777e1bd59c0c93/package/bleparser/qingping.py
@@ -22,7 +23,6 @@ _LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class QingpingDevice:
-
     model: str
     name: str
 
@@ -90,7 +90,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
                 self._process_xdata(
                     xdata_id,
                     xdata_size,
-                    data[xdata_point : xdata_point + xdata_size],  # noqa: E203
+                    data[xdata_point : xdata_point + xdata_size],
                 )
             xdata_point += xdata_size + 2
 
@@ -141,13 +141,13 @@ class QingpingBluetoothDeviceData(BluetoothData):
                 SensorLibrary.PM10__CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, pm10
             )
         elif xdata_id == 0x13 and xdata_size == 2:
-            co2 = unpack("<H", xdata)[0]  # noqa: F841
+            co2 = unpack("<H", xdata)[0]
             self.update_predefined_sensor(
                 SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
             )
         elif xdata_id == 0x0F and xdata_size == 1:
             pass
-            # packet_id = unpack("B", xdata)[0]  # noqa: F841
+            # packet_id = unpack("B", xdata)[0]
             # result.update({"packet": packet_id})
         else:
             _LOGGER.debug(
