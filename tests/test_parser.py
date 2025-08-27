@@ -1,5 +1,5 @@
-import pytest
 from bluetooth_sensor_state_data import BluetoothServiceInfo, SensorUpdate
+from qingping_ble.parser import QingpingBluetoothDeviceData
 from sensor_state_data import (
     BinarySensorDescription,
     BinarySensorDeviceClass,
@@ -12,7 +12,7 @@ from sensor_state_data import (
     Units,
 )
 
-from qingping_ble.parser import QingpingBluetoothDeviceData
+import pytest
 
 
 def test_can_create():
@@ -233,14 +233,14 @@ QINGPING_CGP22C_REAL = BluetoothServiceInfo(
 
 def test_supported_motion_and_light():
     parser = QingpingBluetoothDeviceData()
-    parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
+    assert parser.supported(MOTION_AND_LIGHT_ENSURE_SUPPORTED) is True
     assert parser.title == "Motion & Light EEFF"
 
 
 def test_supported_set_the_title():
     parser = QingpingBluetoothDeviceData()
-    parser.supported(NO_VALID_DATA) is False
-    parser.supported(LIGHT_AND_MOTION) is True
+    assert parser.supported(NO_VALID_DATA) is False
+    assert parser.supported(LIGHT_AND_MOTION) is True
     assert parser.title == "Motion & Light EEFF"
 
 
@@ -1185,4 +1185,121 @@ def test_cgp22c_real_data() -> None:
         },
         binary_entity_descriptions={},
         binary_entity_values={},
+    )
+
+
+def test_cgp23w_real_data() -> None:
+    """Test with real CGP23W data from user - Qingping Temp RH Baro Pro S."""
+    parser = QingpingBluetoothDeviceData()
+
+    # Test with multiple real data samples
+    service_info_1 = BluetoothServiceInfo(
+        name="Qingping Temp RH Baro Pro S",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:40:22:07",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x88\x18\x07\x22\x40\x34\x2d\x58\x01\x04\x17\x01\xca\x00\x02\x01\x61\x07\x02\x72\x27"
+        },
+        source="local",
+    )
+
+    parsed_1 = parser.update(service_info_1)
+    assert parsed_1 == SensorUpdate(
+        title="Temp & RH Monitor Pro 2207",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temp & RH Monitor Pro 2207",
+                model="CGP23W",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="battery", device_id=None),
+                device_class=SensorDeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="pressure", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="pressure", device_id=None),
+                device_class=SensorDeviceClass.PRESSURE,
+                native_unit_of_measurement=Units.PRESSURE_MBAR,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=27.9,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=20.2,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=97,
+            ),
+            DeviceKey(key="pressure", device_id=None): SensorValue(
+                device_key=DeviceKey(key="pressure", device_id=None),
+                name="Pressure",
+                native_value=1009.8,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal Strength",
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+    # Test with another real data sample
+    service_info_2 = BluetoothServiceInfo(
+        name="Qingping Temp RH Baro Pro S",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:40:22:07",
+        rssi=-65,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x88\x18\x07\x22\x40\x34\x2d\x58\x01\x04\x18\x01\xd4\x00\x02\x01\x61\x07\x02\x73\x27"
+        },
+        source="local",
+    )
+
+    parsed_2 = parser.update(service_info_2)
+    assert (
+        parsed_2.entity_values[
+            DeviceKey(key="temperature", device_id=None)
+        ].native_value
+        == 28.0
+    )
+    assert (
+        parsed_2.entity_values[DeviceKey(key="humidity", device_id=None)].native_value
+        == 21.2
+    )
+    assert (
+        parsed_2.entity_values[DeviceKey(key="pressure", device_id=None)].native_value
+        == 1009.9
     )
