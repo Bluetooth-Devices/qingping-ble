@@ -42,6 +42,7 @@ DEVICE_TYPES = {
     0x1E: QingpingDevice("CGC1", "BT Clock Lite"),
     0x24: QingpingDevice("CGDN1", "Air Monitor Lite"),
     0x33: QingpingDevice("CGP22C", "CO2 Temp RH"),
+    0x4F: QingpingDevice("CGG3", "Temp RH M"),
     0x5D: QingpingDevice("CGP22C", "CO2 Temp RH"),
 }
 
