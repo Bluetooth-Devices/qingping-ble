@@ -164,7 +164,7 @@ QINGPING_DOOR_WINDOW = BluetoothServiceInfo(
 )
 
 
-QINGPING_TEMP_RH_M = BluetoothServiceInfo(
+QINGPING_TEMP_RH_M_CGG1 = BluetoothServiceInfo(
     name="Qingping Temp RH M",
     manufacturer_data={},
     service_uuids=[],
@@ -172,6 +172,19 @@ QINGPING_TEMP_RH_M = BluetoothServiceInfo(
     rssi=-60,
     service_data={
         "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x16\xa7%\x144-X\x01\x04\xd8\x00\xbb\x01\x02\x01d"
+    },
+    source="local",
+)
+
+# Real data from user's CGG3 with firmware 2.2.2
+QINGPING_TEMP_RH_M_CGG3 = BluetoothServiceInfo(
+    name="Qingping Temp RH",
+    manufacturer_data={},
+    service_uuids=[],
+    address="aa:bb:cc:dd:ee:ff",
+    rssi=-60,
+    service_data={
+        "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x88O>\x06\x874-X\x01\x04\xf1\x00\xa6\x01\x02\x01d"
     },
     source="local",
 )
@@ -842,9 +855,9 @@ def test_door_window():
     )
 
 
-def test_temp_rh_m():
+def test_temp_rh_m_cgg1():
     parser = QingpingBluetoothDeviceData()
-    parsed = parser.update(QINGPING_TEMP_RH_M)
+    parsed = parser.update(QINGPING_TEMP_RH_M_CGG1)
     assert parsed == SensorUpdate(
         title="Temp RH M EEFF",
         devices={
@@ -888,6 +901,69 @@ def test_temp_rh_m():
                 device_key=DeviceKey(key="humidity", device_id=None),
                 name="Humidity",
                 native_value=44.3,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorValue(
+                device_key=DeviceKey(key="battery", device_id=None),
+                name="Battery",
+                native_value=100,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorValue(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                name="Signal Strength",
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_temp_rh_m_cgg3():
+    parser = QingpingBluetoothDeviceData()
+    parsed = parser.update(QINGPING_TEMP_RH_M_CGG3)
+    assert parsed == SensorUpdate(
+        title="Temp RH M EEFF",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temp RH M EEFF",
+                model="CGG3",
+                manufacturer="Qingping",
+                sw_version=None,
+                hw_version=None,
+            ),
+        },
+        entity_descriptions={
+            DeviceKey(key="temperature", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                device_class=SensorDeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                device_class=SensorDeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="battery", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="battery", device_id=None),
+                device_class=SensorDeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            DeviceKey(key="signal_strength", device_id=None): SensorDescription(
+                device_key=DeviceKey(key="signal_strength", device_id=None),
+                device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            DeviceKey(key="temperature", device_id=None): SensorValue(
+                device_key=DeviceKey(key="temperature", device_id=None),
+                name="Temperature",
+                native_value=24.1,
+            ),
+            DeviceKey(key="humidity", device_id=None): SensorValue(
+                device_key=DeviceKey(key="humidity", device_id=None),
+                name="Humidity",
+                native_value=42.2,
             ),
             DeviceKey(key="battery", device_id=None): SensorValue(
                 device_key=DeviceKey(key="battery", device_id=None),
