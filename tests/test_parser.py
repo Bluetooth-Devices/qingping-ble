@@ -1264,6 +1264,45 @@ def test_cgp22c_real_data() -> None:
     )
 
 
+def test_motion_and_light_high_illuminance() -> None:
+    """
+    Test that illuminance is correctly parsed as uint24.
+
+    The illuminance in the 0x08 xdata is a 24-bit value split across a uint16
+    and a uint8. The high byte must be shifted left by 16 bits, not simply added.
+
+    Based on real CGPR1 advertisement data from
+    https://github.com/pvvx/ATC_MiThermometer.
+    """
+    parser = QingpingBluetoothDeviceData()
+    # Based on real pvvx packet: 4812005E60342D58080401BE09000F0134
+    # Modified illuminance bytes to exercise uint24: motion=1, ill_1=0x0933, ill_2=0x01
+    # illuminance = 0x0933 + (0x01 << 16) = 2355 + 65536 = 67891
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x48\x12"
+            b"\x00\x5e\x60\x34\x2d\x58\x08\x04\x01\x33\x09\x01\x0f\x01\x34"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert (
+        result.entity_values[DeviceKey(key="illuminance", device_id=None)].native_value
+        == 67891
+    )
+    assert (
+        result.binary_entity_values[
+            DeviceKey(key="motion", device_id=None)
+        ].native_value
+        is True
+    )
+
+
 def test_cgp23w_real_data() -> None:
     """Test with real CGP23W data from user - Qingping Temp RH Baro Pro S."""
     parser = QingpingBluetoothDeviceData()

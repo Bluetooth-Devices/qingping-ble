@@ -123,7 +123,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
                 BinarySensorDeviceClass.MOTION, bool(motion)
             )
             self.update_predefined_sensor(
-                SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + illuminance_2
+                SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + (illuminance_2 << 16)
             )
         elif xdata_id == 0x09 and xdata_size == 4:
             illuminance = unpack("<I", xdata)[0]
