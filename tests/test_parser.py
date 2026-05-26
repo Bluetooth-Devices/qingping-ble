@@ -258,6 +258,8 @@ def test_supported_set_the_title():
 
 
 def test_motion_and_light_signal_only():
+    # LIGHT_AND_MOTION is an event packet (hlen=0x48). Per the reference
+    # parser, illuminance is not valid in event packets — only motion is.
     parser = QingpingBluetoothDeviceData()
     assert parser.update(LIGHT_AND_MOTION) == SensorUpdate(
         title="Motion & Light EEFF",
@@ -271,11 +273,6 @@ def test_motion_and_light_signal_only():
             )
         },
         entity_descriptions={
-            DeviceKey(key="illuminance", device_id=None): SensorDescription(
-                device_key=DeviceKey(key="illuminance", device_id=None),
-                device_class=SensorDeviceClass.ILLUMINANCE,
-                native_unit_of_measurement=Units.LIGHT_LUX,
-            ),
             DeviceKey(key="signal_strength", device_id=None): SensorDescription(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
                 device_class=SensorDeviceClass.SIGNAL_STRENGTH,
@@ -283,11 +280,6 @@ def test_motion_and_light_signal_only():
             ),
         },
         entity_values={
-            DeviceKey(key="illuminance", device_id=None): SensorValue(
-                device_key=DeviceKey(key="illuminance", device_id=None),
-                name="Illuminance",
-                native_value=13,
-            ),
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
                 name="Signal Strength",
@@ -376,6 +368,7 @@ def test_motion_and_light_battery_update() -> None:
 
 
 def test_has_motion():
+    # Event packet (hlen=0x48): motion is updated, illuminance is not.
     parser = QingpingBluetoothDeviceData()
     service_info = BluetoothServiceInfo(
         name="Qingping Motion & Light",
@@ -407,22 +400,12 @@ def test_has_motion():
                 device_class=SensorDeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
             ),
-            DeviceKey(key="illuminance", device_id=None): SensorDescription(
-                device_key=DeviceKey(key="illuminance", device_id=None),
-                device_class=SensorDeviceClass.ILLUMINANCE,
-                native_unit_of_measurement=Units.LIGHT_LUX,
-            ),
         },
         entity_values={
             DeviceKey(key="signal_strength", device_id=None): SensorValue(
                 device_key=DeviceKey(key="signal_strength", device_id=None),
                 name="Signal Strength",
                 native_value=-60,
-            ),
-            DeviceKey(key="illuminance", device_id=None): SensorValue(
-                device_key=DeviceKey(key="illuminance", device_id=None),
-                name="Illuminance",
-                native_value=301,
             ),
         },
         binary_entity_descriptions={
@@ -1311,7 +1294,7 @@ def test_cgp22c_firmware_1_6_0_co2_tlv_0x18() -> None:
 
 def test_motion_and_light_high_illuminance() -> None:
     """
-    Test that illuminance is correctly parsed as uint24.
+    Test that illuminance is correctly parsed as uint24 in non-event packets.
 
     The illuminance in the 0x08 xdata is a 24-bit value split across a uint16
     and a uint8. The high byte must be shifted left by 16 bits, not simply added.
@@ -1320,8 +1303,8 @@ def test_motion_and_light_high_illuminance() -> None:
     https://github.com/pvvx/ATC_MiThermometer.
     """
     parser = QingpingBluetoothDeviceData()
-    # Based on real pvvx packet: 4812005E60342D58080401BE09000F0134
-    # Modified illuminance bytes to exercise uint24: motion=1, ill_1=0x0933, ill_2=0x01
+    # Non-event packet (hlen=0x08, event bit clear).
+    # motion=1, ill_1=0x0933, ill_2=0x01
     # illuminance = 0x0933 + (0x01 << 16) = 2355 + 65536 = 67891
     service_info = BluetoothServiceInfo(
         name="Qingping Motion & Light",
@@ -1330,7 +1313,7 @@ def test_motion_and_light_high_illuminance() -> None:
         address="aa:bb:cc:dd:ee:ff",
         rssi=-60,
         service_data={
-            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x48\x12"
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12"
             b"\x00\x5e\x60\x34\x2d\x58\x08\x04\x01\x33\x09\x01\x0f\x01\x34"
         },
         source="local",
@@ -1345,6 +1328,87 @@ def test_motion_and_light_high_illuminance() -> None:
             DeviceKey(key="motion", device_id=None)
         ].native_value
         is True
+    )
+
+
+def test_cgpr1_event_packet_does_not_update_illuminance() -> None:
+    """
+    Test that event packets (hlen bit 6 set) do not update illuminance.
+
+    When the CGPR1 transmits a motion-change event (hlen=0x48 — event bit
+    set), the trailing 3 bytes of the 0x08 xdata are not illuminance data.
+    Treating them as illuminance produces large spurious spikes in the
+    illuminance graph (see issue #84). The reference parser at
+    https://github.com/pvvx/TLB2Z (ble_scaning.c) only updates illuminance
+    from the 0x08 chunk when (hlen & 0x40) == 0. Motion is still updated.
+
+    Data from issue #84: motion-start event packet
+    14 16 CDFD 48 12 005E60342D58 0804 01271400 0F01 63
+
+    With the buggy parser this returns illuminance=5159.
+    """
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:60:5E:00",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x48\x12"
+            b"\x00\x5e\x60\x34\x2d\x58\x08\x04\x01\x27\x14\x00\x0f\x01\x63"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert DeviceKey(key="illuminance", device_id=None) not in result.entity_values, (
+        "Event packets must not update illuminance"
+    )
+    assert (
+        result.binary_entity_values[
+            DeviceKey(key="motion", device_id=None)
+        ].native_value
+        is True
+    )
+
+
+def test_cgpr1_non_event_packet_updates_illuminance() -> None:
+    """
+    Test that non-event packets (hlen bit 6 clear) update illuminance.
+
+    Data from issue #84: regular periodic packet preceding the motion event
+    17 16 CDFD 08 12 005E60342D58 0201 64 0F01 5A 0804 01B83601
+
+    motion=1, illuminance = 0x0136B8 = 79544
+    """
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:60:5E:00",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12"
+            b"\x00\x5e\x60\x34\x2d\x58\x02\x01\x64\x0f\x01\x5a"
+            b"\x08\x04\x01\xb8\x36\x01"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert (
+        result.entity_values[DeviceKey(key="illuminance", device_id=None)].native_value
+        == 79544
+    )
+    assert (
+        result.binary_entity_values[
+            DeviceKey(key="motion", device_id=None)
+        ].native_value
+        is True
+    )
+    assert (
+        result.entity_values[DeviceKey(key="battery", device_id=None)].native_value
+        == 100
     )
 
 
