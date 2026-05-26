@@ -1316,9 +1316,9 @@ def test_cgpr1_event_packet_does_not_update_illuminance() -> None:
         source="local",
     )
     result = parser.update(service_info)
-    assert (
-        DeviceKey(key="illuminance", device_id=None) not in result.entity_values
-    ), "Event packets must not update illuminance"
+    assert DeviceKey(key="illuminance", device_id=None) not in result.entity_values, (
+        "Event packets must not update illuminance"
+    )
     assert (
         result.binary_entity_values[
             DeviceKey(key="motion", device_id=None)
