@@ -83,6 +83,11 @@ class QingpingBluetoothDeviceData(BluetoothData):
         msg_length = len(data)
         if msg_length < 12:
             return
+        # hlen byte: bit 6 set means the advertisement carries an event
+        # (e.g. motion-change). In event packets the trailing bytes of the
+        # 0x08 (motion+illuminance) chunk do not contain a valid illuminance
+        # reading. See https://github.com/pvvx/TLB2Z ble_scaning.c.
+        is_event = bool(data[4] & 0x40)
         xdata_point = 14
         while xdata_point < msg_length:
             xdata_id = data[xdata_point - 2]
@@ -92,10 +97,13 @@ class QingpingBluetoothDeviceData(BluetoothData):
                     xdata_id,
                     xdata_size,
                     data[xdata_point : xdata_point + xdata_size],
+                    is_event,
                 )
             xdata_point += xdata_size + 2
 
-    def _process_xdata(self, xdata_id: int, xdata_size: int, xdata: bytes) -> None:
+    def _process_xdata(
+        self, xdata_id: int, xdata_size: int, xdata: bytes, is_event: bool = False
+    ) -> None:
         if xdata_id == 0x01 and xdata_size == 4:
             (temp, humi) = unpack("<hH", xdata)
             self.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
@@ -122,9 +130,13 @@ class QingpingBluetoothDeviceData(BluetoothData):
             self.update_predefined_binary_sensor(
                 BinarySensorDeviceClass.MOTION, bool(motion)
             )
-            self.update_predefined_sensor(
-                SensorLibrary.LIGHT__LIGHT_LUX, illuminance_1 + (illuminance_2 << 16)
-            )
+            # Only the motion byte is valid in event packets; the trailing
+            # bytes are not illuminance and produce spurious spikes (#84).
+            if not is_event:
+                self.update_predefined_sensor(
+                    SensorLibrary.LIGHT__LIGHT_LUX,
+                    illuminance_1 + (illuminance_2 << 16),
+                )
         elif xdata_id == 0x09 and xdata_size == 4:
             illuminance = unpack("<I", xdata)[0]
             self.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illuminance)
