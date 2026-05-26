@@ -1524,9 +1524,7 @@ def test_light_binary_sensor() -> None:
     )
     result = parser.update(service_info)
     assert (
-        result.binary_entity_values[
-            DeviceKey(key="light", device_id=None)
-        ].native_value
+        result.binary_entity_values[DeviceKey(key="light", device_id=None)].native_value
         is True
     )
 
@@ -1548,9 +1546,10 @@ def test_unknown_xdata_id_is_ignored() -> None:
         source="local",
     )
     result = parser.update(service_info)
-    assert result.entity_values[
-        DeviceKey(key="battery", device_id=None)
-    ].native_value == 100
+    assert (
+        result.entity_values[DeviceKey(key="battery", device_id=None)].native_value
+        == 100
+    )
 
 
 def test_packet_id_xdata_is_ignored() -> None:
@@ -1569,9 +1568,10 @@ def test_packet_id_xdata_is_ignored() -> None:
         source="local",
     )
     result = parser.update(service_info)
-    assert result.entity_values[
-        DeviceKey(key="battery", device_id=None)
-    ].native_value == 100
+    assert (
+        result.entity_values[DeviceKey(key="battery", device_id=None)].native_value
+        == 100
+    )
 
 
 def test_cgp23w_real_data() -> None:
