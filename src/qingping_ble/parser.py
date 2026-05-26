@@ -141,7 +141,9 @@ class QingpingBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(
                 SensorLibrary.PM10__CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, pm10
             )
-        elif xdata_id == 0x13 and xdata_size == 2:
+        elif xdata_id in (0x13, 0x18) and xdata_size == 2:
+            # CGP22C firmware >=1.6.0 broadcasts CO2 as TLV id 0x18
+            # instead of 0x13 (see issue #72).
             co2 = unpack("<H", xdata)[0]
             self.update_predefined_sensor(
                 SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
