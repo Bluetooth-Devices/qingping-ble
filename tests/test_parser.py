@@ -1296,15 +1296,11 @@ def test_cgp22c_firmware_1_6_0_co2_tlv_0x18() -> None:
         == 290
     )
     assert (
-        parsed.entity_values[
-            DeviceKey(key="temperature", device_id=None)
-        ].native_value
+        parsed.entity_values[DeviceKey(key="temperature", device_id=None)].native_value
         == 21.0
     )
     assert (
-        parsed.entity_values[
-            DeviceKey(key="humidity", device_id=None)
-        ].native_value
+        parsed.entity_values[DeviceKey(key="humidity", device_id=None)].native_value
         == 58.0
     )
     assert (
