@@ -1264,6 +1264,51 @@ def test_cgp22c_real_data() -> None:
     )
 
 
+def test_cgp22c_firmware_1_6_0_co2_tlv_0x18() -> None:
+    """Test CGP22C with firmware 1.6.0 sending CO2 as TLV id 0x18.
+
+    Firmware 1.6.0 changed CO2 from TLV 0x13 to 0x18. The firmware itself
+    has a regression where the CO2 value is stuck (see issue #72), but the
+    library should still parse it so updated firmware will work seamlessly.
+    """
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping CO2 Temp RH",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:87:28:C6",
+        rssi=-71,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": (
+                b"\x08\x5d\xc6\x28\x87\x34\x2d\x58"
+                b"\x01\x04\xd2\x00\x44\x02"
+                b"\x02\x01\x64"
+                b"\x18\x02\x22\x01"
+            )
+        },
+        source="28:0C:50:E0:9D:AD",
+    )
+    parsed = parser.update(service_info)
+    assert (
+        parsed.entity_values[
+            DeviceKey(key="carbon_dioxide", device_id=None)
+        ].native_value
+        == 290
+    )
+    assert (
+        parsed.entity_values[DeviceKey(key="temperature", device_id=None)].native_value
+        == 21.0
+    )
+    assert (
+        parsed.entity_values[DeviceKey(key="humidity", device_id=None)].native_value
+        == 58.0
+    )
+    assert (
+        parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value
+        == 100
+    )
+
+
 def test_motion_and_light_high_illuminance() -> None:
     """
     Test that illuminance is correctly parsed as uint24.
