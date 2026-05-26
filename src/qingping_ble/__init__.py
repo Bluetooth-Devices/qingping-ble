@@ -16,7 +16,7 @@ from sensor_state_data import (
 
 from .parser import QingpingBluetoothDeviceData
 
-__version__ = "1.1.3"
+__version__ = "1.1.4"
 
 __all__ = [
     "BinarySensorDeviceClass",
