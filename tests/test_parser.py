@@ -1412,6 +1412,168 @@ def test_cgpr1_non_event_packet_updates_illuminance() -> None:
     )
 
 
+def test_no_service_data_uuid() -> None:
+    """Advertisements without the Qingping service data UUID are ignored."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={},
+        source="local",
+    )
+    assert parser.supported(service_info) is False
+
+
+def test_empty_device_name_strips_qingping_prefix() -> None:
+    """Devices with an empty DEVICE_TYPES name strip 'Qingping ' from the adv name."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping CGG1",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x01\xcd\xd5`4-X\x02\x01d"
+        },
+        source="local",
+    )
+    parser.update(service_info)
+    assert parser.title == "CGG1 EEFF"
+
+
+def test_empty_device_name_keeps_unprefixed_name() -> None:
+    """Devices with an empty DEVICE_TYPES name keep a non-'Qingping ' adv name as-is."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="CustomSensor",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x01\xcd\xd5`4-X\x02\x01d"
+        },
+        source="local",
+    )
+    parser.update(service_info)
+    assert parser.title == "CustomSensor EEFF"
+
+
+def test_short_message_is_ignored() -> None:
+    """Service data shorter than the minimum header length yields no sensor values."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={"0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12"},
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert result.entity_values == {
+        DeviceKey(key="signal_strength", device_id=None): SensorValue(
+            device_key=DeviceKey(key="signal_strength", device_id=None),
+            name="Signal Strength",
+            native_value=-60,
+        ),
+    }
+    assert result.binary_entity_values == {}
+
+
+def test_truncated_xdata_chunk_is_skipped() -> None:
+    """A TLV whose declared size runs past the message end is skipped, not parsed."""
+    parser = QingpingBluetoothDeviceData()
+    # Header (8) + truncated temp/humi TLV header (0x01 0x04) that claims 4
+    # bytes of payload but the message only has 3 filler bytes remaining.
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12\xcd\xd5`4-X"
+            b"\x01\x04\x00\x00\x00"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert DeviceKey(key="temperature", device_id=None) not in result.entity_values
+    assert DeviceKey(key="humidity", device_id=None) not in result.entity_values
+
+
+def test_light_binary_sensor() -> None:
+    """TLV 0x11 (size 1) updates the LIGHT binary sensor."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12\xcd\xd5`4-X\x11\x01\x01"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert (
+        result.binary_entity_values[
+            DeviceKey(key="light", device_id=None)
+        ].native_value
+        is True
+    )
+
+
+def test_unknown_xdata_id_is_ignored() -> None:
+    """Unknown TLV ids are logged and skipped without affecting other values."""
+    parser = QingpingBluetoothDeviceData()
+    # Battery TLV followed by unknown TLV 0xFE with 1 byte payload.
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12\xcd\xd5`4-X"
+            b"\x02\x01\x64\xfe\x01\x00"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert result.entity_values[
+        DeviceKey(key="battery", device_id=None)
+    ].native_value == 100
+
+
+def test_packet_id_xdata_is_ignored() -> None:
+    """TLV 0x0F (packet id, size 1) is consumed but produces no sensor output."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Motion & Light",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": b"\x08\x12\xcd\xd5`4-X"
+            b"\x02\x01\x64\x0f\x01\x42"
+        },
+        source="local",
+    )
+    result = parser.update(service_info)
+    assert result.entity_values[
+        DeviceKey(key="battery", device_id=None)
+    ].native_value == 100
+
+
 def test_cgp23w_real_data() -> None:
     """Test with real CGP23W data from user - Qingping Temp RH Baro Pro S."""
     parser = QingpingBluetoothDeviceData()
