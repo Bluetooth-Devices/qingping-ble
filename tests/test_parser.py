@@ -1689,3 +1689,33 @@ def test_cgp23w_real_data() -> None:
         parsed_2.entity_values[DeviceKey(key="pressure", device_id=None)].native_value
         == 1009.9
     )
+
+
+def test_empty_service_data_does_not_crash():
+    """A Qingping advertisement with empty service data must not raise."""
+    info = BluetoothServiceInfo(
+        name="Qingping Test",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={"0000fdcd-0000-1000-8000-00805f9b34fb": b""},
+        source="local",
+    )
+    parser = QingpingBluetoothDeviceData()
+    assert parser.supported(info) is False
+
+
+def test_one_byte_service_data_does_not_crash():
+    """A Qingping advertisement with a single byte of service data must not raise."""
+    info = BluetoothServiceInfo(
+        name="Qingping Test",
+        manufacturer_data={},
+        service_uuids=[],
+        address="aa:bb:cc:dd:ee:ff",
+        rssi=-60,
+        service_data={"0000fdcd-0000-1000-8000-00805f9b34fb": b"\x88"},
+        source="local",
+    )
+    parser = QingpingBluetoothDeviceData()
+    assert parser.supported(info) is False
