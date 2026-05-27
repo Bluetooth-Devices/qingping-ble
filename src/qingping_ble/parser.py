@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from struct import unpack
+from struct import Struct
 
 from bluetooth_data_tools import short_address
 from bluetooth_sensor_state_data import BluetoothData
@@ -19,6 +19,13 @@ from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import BinarySensorDeviceClass, SensorLibrary
 
 _LOGGER = logging.getLogger(__name__)
+
+UNPACK_TEMP_HUMID = Struct("<hH").unpack
+UNPACK_PRESSURE = Struct("<H").unpack
+UNPACK_MOTION_ILLUM = Struct("<BHB").unpack
+UNPACK_ILLUMINANCE = Struct("<I").unpack
+UNPACK_PM = Struct("<HH").unpack
+UNPACK_CO2 = Struct("<H").unpack
 
 
 @dataclass
@@ -105,14 +112,13 @@ class QingpingBluetoothDeviceData(BluetoothData):
         self, xdata_id: int, xdata_size: int, xdata: bytes, is_event: bool = False
     ) -> None:
         if xdata_id == 0x01 and xdata_size == 4:
-            (temp, humi) = unpack("<hH", xdata)
+            (temp, humi) = UNPACK_TEMP_HUMID(xdata)
             self.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
             self.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
         elif xdata_id == 0x02 and xdata_size == 1:
-            batt = unpack("B", xdata)[0]
-            self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
+            self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, xdata[0])
         elif xdata_id == 0x04 and xdata_size == 1:
-            closed = unpack("B", xdata)[0]
+            closed = xdata[0]
             self.update_predefined_binary_sensor(
                 BinarySensorDeviceClass.DOOR, closed in (0, 2)
             )
@@ -123,10 +129,10 @@ class QingpingBluetoothDeviceData(BluetoothData):
                 name="Door left open",
             )
         elif xdata_id == 0x07 and xdata_size == 2:
-            pressure = unpack("<H", xdata)[0]
+            (pressure,) = UNPACK_PRESSURE(xdata)
             self.update_predefined_sensor(SensorLibrary.PRESSURE__MBAR, pressure / 10)
         elif xdata_id == 0x08 and xdata_size == 4:
-            (motion, illuminance_1, illuminance_2) = unpack("<BHB", xdata)
+            (motion, illuminance_1, illuminance_2) = UNPACK_MOTION_ILLUM(xdata)
             self.update_predefined_binary_sensor(
                 BinarySensorDeviceClass.MOTION, bool(motion)
             )
@@ -138,15 +144,14 @@ class QingpingBluetoothDeviceData(BluetoothData):
                     illuminance_1 + (illuminance_2 << 16),
                 )
         elif xdata_id == 0x09 and xdata_size == 4:
-            illuminance = unpack("<I", xdata)[0]
+            (illuminance,) = UNPACK_ILLUMINANCE(xdata)
             self.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illuminance)
         elif xdata_id == 0x11 and xdata_size == 1:
-            light = unpack("B", xdata)[0]
             self.update_predefined_binary_sensor(
-                BinarySensorDeviceClass.LIGHT, bool(light)
+                BinarySensorDeviceClass.LIGHT, bool(xdata[0])
             )
         elif xdata_id == 0x12 and xdata_size == 4:
-            (pm2_5, pm10) = unpack("<HH", xdata)
+            (pm2_5, pm10) = UNPACK_PM(xdata)
             self.update_predefined_sensor(
                 SensorLibrary.PM25__CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, pm2_5
             )
@@ -156,7 +161,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
         elif xdata_id in (0x13, 0x18) and xdata_size == 2:
             # CGP22C firmware >=1.6.0 broadcasts CO2 as TLV id 0x18
             # instead of 0x13 (see issue #72).
-            co2 = unpack("<H", xdata)[0]
+            (co2,) = UNPACK_CO2(xdata)
             self.update_predefined_sensor(
                 SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
             )
