@@ -60,6 +60,8 @@ class QingpingBluetoothDeviceData(BluetoothData):
         if SERVICE_DATA_UUID not in service_info.service_data:
             return
         unpadded_data = service_info.service_data[SERVICE_DATA_UUID]
+        if len(unpadded_data) < 2:
+            return
         data = b"\x00\x00\x00\x00" + unpadded_data
         device_id = data[5]
         if not (device := DEVICE_TYPES.get(device_id)):
