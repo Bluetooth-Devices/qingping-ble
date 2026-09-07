@@ -1,5 +1,5 @@
+import pytest
 from bluetooth_sensor_state_data import BluetoothServiceInfo, SensorUpdate
-from qingping_ble.parser import QingpingBluetoothDeviceData
 from sensor_state_data import (
     BinarySensorDescription,
     BinarySensorDeviceClass,
@@ -12,7 +12,7 @@ from sensor_state_data import (
     Units,
 )
 
-import pytest
+from qingping_ble.parser import QingpingBluetoothDeviceData
 
 
 def test_can_create():

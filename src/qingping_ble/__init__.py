@@ -26,7 +26,6 @@ __all__ = [
     "SensorDescription",
     "SensorDeviceClass",
     "SensorDeviceInfo",
-    "SensorDeviceInfo",
     "SensorUpdate",
     "SensorValue",
     "Units",
