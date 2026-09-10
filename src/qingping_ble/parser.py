@@ -160,13 +160,19 @@ class QingpingBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(
                 SensorLibrary.PM10__CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, pm10
             )
-        elif xdata_id in (0x13, 0x18) and xdata_size == 2:
-            # CGP22C firmware >=1.6.0 broadcasts CO2 as TLV id 0x18
-            # instead of 0x13 (see issue #72).
+        elif xdata_id == 0x13 and xdata_size == 2:
             (co2,) = UNPACK_CO2(xdata)
             self.update_predefined_sensor(
                 SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
             )
+        elif xdata_id == 0x18 and xdata_size == 2:
+            # Static 2-byte hardware capability bitmap (screen type, power
+            # source, Wi-Fi capabilities, ...), not a sensor reading. On the
+            # CGP22C it is always 0x0122, which #96 misread as CO2 and used to
+            # overwrite the real 0x13 value with a constant 290 ppm (#72, #115).
+            # CO2 is always broadcast as TLV id 0x13; confirmed against
+            # Qingping's internal BLE protocol spec in #115.
+            pass
         elif xdata_id == 0x0F and xdata_size == 1:
             pass
             # packet_id = unpack("B", xdata)[0]

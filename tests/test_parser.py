@@ -1247,49 +1247,63 @@ def test_cgp22c_real_data() -> None:
     )
 
 
-def test_cgp22c_firmware_1_6_0_co2_tlv_0x18() -> None:
-    """Test CGP22C with firmware 1.6.0 sending CO2 as TLV id 0x18.
+def test_cgp22c_tlv_0x18_is_not_co2() -> None:
+    """TLV id 0x18 is a static hardware bitmap, not CO2 (issues #72, #115).
 
-    Firmware 1.6.0 changed CO2 from TLV 0x13 to 0x18. The firmware itself
-    has a regression where the CO2 value is stuck (see issue #72), but the
-    library should still parse it so updated firmware will work seamlessly.
+    The CGP22C alternates between a temperature/humidity frame and a CO2
+    frame; both frames carry a constant ``0x18`` field (``0x0122`` = 290).
+    #96 misread ``0x18`` as CO2, so the real ``0x13`` reading was overwritten
+    with 290 ppm on every frame. The parser must only trust ``0x13``.
+
+    Frames captured on firmware 1.9.9 (MAC bytes anonymised):
+
+    - temp/hum: ``08 5d ffeeddccbbaa 01 04 0d010e02 02 01 64 18 02 2201``
+    - CO2:      ``08 5d ffeeddccbbaa 13 02 7d03     02 01 64 18 02 2201``
     """
+    co2_key = DeviceKey(key="carbon_dioxide", device_id=None)
+
+    def frame(payload: bytes) -> BluetoothServiceInfo:
+        return BluetoothServiceInfo(
+            name="Qingping CO2 Temp RH",
+            manufacturer_data={},
+            service_uuids=[],
+            address="58:2D:34:FF:EE:DD",
+            rssi=-53,
+            service_data={"0000fdcd-0000-1000-8000-00805f9b34fb": payload},
+            source="local",
+        )
+
+    temp_hum_frame = frame(
+        b"\x08\x5d\xff\xee\xdd\xcc\xbb\xaa"
+        b"\x01\x04\x0d\x01\x0e\x02"
+        b"\x02\x01\x64"
+        b"\x18\x02\x22\x01"
+    )
+    co2_frame = frame(
+        b"\x08\x5d\xff\xee\xdd\xcc\xbb\xaa\x13\x02\x7d\x03\x02\x01\x64\x18\x02\x22\x01"
+    )
+
     parser = QingpingBluetoothDeviceData()
-    service_info = BluetoothServiceInfo(
-        name="Qingping CO2 Temp RH",
-        manufacturer_data={},
-        service_uuids=[],
-        address="58:2D:34:87:28:C6",
-        rssi=-71,
-        service_data={
-            "0000fdcd-0000-1000-8000-00805f9b34fb": (
-                b"\x08\x5d\xc6\x28\x87\x34\x2d\x58"
-                b"\x01\x04\xd2\x00\x44\x02"
-                b"\x02\x01\x64"
-                b"\x18\x02\x22\x01"
-            )
-        },
-        source="28:0C:50:E0:9D:AD",
-    )
-    parsed = parser.update(service_info)
-    assert (
-        parsed.entity_values[
-            DeviceKey(key="carbon_dioxide", device_id=None)
-        ].native_value
-        == 290
-    )
+
+    # A temp/hum frame carries 0x18 but no 0x13 -> no CO2 value at all.
+    parsed = parser.update(temp_hum_frame)
+    assert co2_key not in parsed.entity_values
     assert (
         parsed.entity_values[DeviceKey(key="temperature", device_id=None)].native_value
-        == 21.0
+        == 26.9
     )
     assert (
         parsed.entity_values[DeviceKey(key="humidity", device_id=None)].native_value
-        == 58.0
+        == 52.6
     )
-    assert (
-        parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value
-        == 100
-    )
+
+    # The CO2 frame reports the real value from 0x13.
+    parsed = parser.update(co2_frame)
+    assert parsed.entity_values[co2_key].native_value == 893
+
+    # A following temp/hum frame must not clobber it back to 290.
+    parsed = parser.update(temp_hum_frame)
+    assert parsed.entity_values[co2_key].native_value == 893
 
 
 def test_motion_and_light_high_illuminance() -> None:
