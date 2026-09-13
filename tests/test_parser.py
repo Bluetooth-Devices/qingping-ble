@@ -1691,6 +1691,45 @@ def test_cgp23w_real_data() -> None:
     )
 
 
+def test_cgp23w_temp_rh_baro_pro_s_real_data() -> None:
+    """Test with real CGP23W Temp RH Baro Pro S data using device type 0x26."""
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Temp RH Baro Pro S",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:81:9F:3C",
+        rssi=-59,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": (
+                b"\x88&<\x9f\x814-X\x01\x048\x01\xba\x01\x02\x01>\x07\x02\xbb%"
+            )
+        },
+        source="local",
+    )
+
+    parsed = parser.update(service_info)
+    assert parsed.devices[None] == SensorDeviceInfo(
+        name="Temp RH Baro Pro S 9F3C",
+        model="CGP23W",
+        manufacturer="Qingping",
+        sw_version=None,
+        hw_version=None,
+    )
+    assert parsed.entity_values[
+        DeviceKey(key="temperature", device_id=None)
+    ].native_value == pytest.approx(31.2)
+    assert parsed.entity_values[
+        DeviceKey(key="humidity", device_id=None)
+    ].native_value == pytest.approx(44.2)
+    assert (
+        parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value == 62
+    )
+    assert parsed.entity_values[
+        DeviceKey(key="pressure", device_id=None)
+    ].native_value == pytest.approx(965.9)
+
+
 def test_empty_service_data_does_not_crash():
     """A Qingping advertisement with empty service data must not raise."""
     info = BluetoothServiceInfo(
