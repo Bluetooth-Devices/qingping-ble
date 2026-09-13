@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qingping-ble"
-version = "1.1.6"
+version = "1.1.7"
 description = "Qingping BLE support"
 authors = ["J. Nick Koston <nick@koston.org>"]
 license = "MIT"
