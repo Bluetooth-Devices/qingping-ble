@@ -1723,7 +1723,8 @@ def test_cgp23w_temp_rh_baro_pro_s_real_data() -> None:
         DeviceKey(key="humidity", device_id=None)
     ].native_value == pytest.approx(44.2)
     assert (
-        parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value == 62
+        parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value
+        == 62
     )
     assert parsed.entity_values[
         DeviceKey(key="pressure", device_id=None)
