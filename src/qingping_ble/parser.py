@@ -16,7 +16,7 @@ from struct import Struct
 from bluetooth_data_tools import short_address
 from bluetooth_sensor_state_data import BluetoothData
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import BinarySensorDeviceClass, SensorLibrary
+from sensor_state_data import BinarySensorDeviceClass, SensorLibrary, Units
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,6 +26,7 @@ UNPACK_MOTION_ILLUM = Struct("<BHB").unpack
 UNPACK_ILLUMINANCE = Struct("<I").unpack
 UNPACK_PM = Struct("<HH").unpack
 UNPACK_CO2 = Struct("<H").unpack
+UNPACK_VOC = Struct("<H").unpack
 
 
 @dataclass
@@ -52,6 +53,8 @@ DEVICE_TYPES = {
     0x33: QingpingDevice("CGP22C", "CO2 Temp RH"),
     0x4F: QingpingDevice("CGG3", "Temp RH M"),
     0x5D: QingpingDevice("CGP22C", "CO2 Temp RH"),
+    0x52: QingpingDevice("CGR1PC", "Indoor Environment Monitor"),
+    0x62: QingpingDevice("CGR1PC", "Indoor Environment Monitor"),
 }
 
 
@@ -119,7 +122,9 @@ class QingpingBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
             self.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
         elif xdata_id == 0x02 and xdata_size == 1:
-            self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, xdata[0])
+            # 0xff means the device is externally powered: report a full battery
+            battery = 100 if xdata[0] == 0xFF else xdata[0]
+            self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, battery)
         elif xdata_id == 0x04 and xdata_size == 1:
             closed = xdata[0]
             self.update_predefined_binary_sensor(
@@ -165,6 +170,22 @@ class QingpingBluetoothDeviceData(BluetoothData):
             (co2,) = UNPACK_CO2(xdata)
             self.update_predefined_sensor(
                 SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
+            )
+        elif xdata_id == 0x15 and xdata_size == 2:
+            # Sensirion-style VOC index (unitless, 0-500)
+            (voc,) = UNPACK_VOC(xdata)
+            self.update_sensor(
+                key="voc",
+                native_unit_of_measurement=None,
+                native_value=voc,
+                name="VOC Index",
+            )
+        elif xdata_id == 0x19 and xdata_size == 1:
+            self.update_sensor(
+                key="noise",
+                name="Noise",
+                native_unit_of_measurement=Units.SOUND_PRESSURE_DB,
+                native_value=xdata[0],
             )
         elif xdata_id == 0x18 and xdata_size == 2:
             # Static 2-byte hardware capability bitmap (screen type, power

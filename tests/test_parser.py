@@ -1745,6 +1745,82 @@ def test_cgp23w_temp_rh_baro_pro_s_real_data() -> None:
     ].native_value == pytest.approx(965.9)
 
 
+def test_cgr1pc_real_data_temp_rh_noise() -> None:
+    """Test with real CGR1PC data (device type 0x52): temp, RH, battery, noise.
+
+    Frame captured from a 0x3A unit with the device type byte adjusted.
+    """
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Indoor",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:85:40:A4",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": (
+                b"\x08R\xa4@\x854-X\x01\x04\xfe\x00?\x02\x02\x01\xff\x19\x017"
+            )
+        },
+        source="local",
+    )
+
+    parsed = parser.update(service_info)
+    assert parsed.devices[None] == SensorDeviceInfo(
+        name="Indoor Environment Monitor 40A4",
+        model="CGR1PC",
+        manufacturer="Qingping",
+        sw_version=None,
+        hw_version=None,
+    )
+    assert parsed.entity_values[
+        DeviceKey(key="temperature", device_id=None)
+    ].native_value == pytest.approx(25.4)
+    assert parsed.entity_values[
+        DeviceKey(key="humidity", device_id=None)
+    ].native_value == pytest.approx(57.5)
+    # battery TLV is 0xff (externally powered): reported as a full battery
+    assert parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value == 100
+    assert parsed.entity_values[DeviceKey(key="noise", device_id=None)].native_value == 55
+    assert (
+        parsed.entity_descriptions[
+            DeviceKey(key="noise", device_id=None)
+        ].native_unit_of_measurement
+        == Units.SOUND_PRESSURE_DB
+    )
+
+
+def test_cgr1pc_real_data_voc_index() -> None:
+    """Test with real CGR1PC data: VOC index (TLV 0x15) and illuminance.
+
+    The VOC index is a unitless Sensirion-style index (eTVOC), so the sensor
+    must have no device class and no unit of measurement.
+    """
+    parser = QingpingBluetoothDeviceData()
+    service_info = BluetoothServiceInfo(
+        name="Qingping Indoor",
+        manufacturer_data={},
+        service_uuids=[],
+        address="58:2D:34:85:40:A4",
+        rssi=-60,
+        service_data={
+            "0000fdcd-0000-1000-8000-00805f9b34fb": (
+                b"\x08R\xa4@\x854-X\x15\x02\x9e\x00\x09\x04\x81\x02\x00\x00"
+            )
+        },
+        source="local",
+    )
+
+    parsed = parser.update(service_info)
+    assert parsed.entity_values[DeviceKey(key="voc", device_id=None)].native_value == 158
+    voc_description = parsed.entity_descriptions[DeviceKey(key="voc", device_id=None)]
+    assert voc_description.device_class is None
+    assert voc_description.native_unit_of_measurement is None
+    assert parsed.entity_values[
+        DeviceKey(key="illuminance", device_id=None)
+    ].native_value == 641
+
+
 def test_empty_service_data_does_not_crash():
     """A Qingping advertisement with empty service data must not raise."""
     info = BluetoothServiceInfo(
