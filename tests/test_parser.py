@@ -1780,8 +1780,13 @@ def test_cgr1pc_real_data_temp_rh_noise() -> None:
         DeviceKey(key="humidity", device_id=None)
     ].native_value == pytest.approx(57.5)
     # battery TLV is 0xff (externally powered): reported as a full battery
-    assert parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value == 100
-    assert parsed.entity_values[DeviceKey(key="noise", device_id=None)].native_value == 55
+    assert (
+        parsed.entity_values[DeviceKey(key="battery", device_id=None)].native_value
+        == 100
+    )
+    assert (
+        parsed.entity_values[DeviceKey(key="noise", device_id=None)].native_value == 55
+    )
     assert (
         parsed.entity_descriptions[
             DeviceKey(key="noise", device_id=None)
@@ -1812,13 +1817,16 @@ def test_cgr1pc_real_data_voc_index() -> None:
     )
 
     parsed = parser.update(service_info)
-    assert parsed.entity_values[DeviceKey(key="voc", device_id=None)].native_value == 158
+    assert (
+        parsed.entity_values[DeviceKey(key="voc", device_id=None)].native_value == 158
+    )
     voc_description = parsed.entity_descriptions[DeviceKey(key="voc", device_id=None)]
     assert voc_description.device_class is None
     assert voc_description.native_unit_of_measurement is None
-    assert parsed.entity_values[
-        DeviceKey(key="illuminance", device_id=None)
-    ].native_value == 641
+    assert (
+        parsed.entity_values[DeviceKey(key="illuminance", device_id=None)].native_value
+        == 641
+    )
 
 
 def test_empty_service_data_does_not_crash():
