@@ -1896,9 +1896,12 @@ def test_cgr1pc_real_data_voc_index() -> None:
 
     parsed = parser.update(service_info)
     assert (
-        parsed.entity_values[DeviceKey(key="voc", device_id=None)].native_value == 158
+        parsed.entity_values[DeviceKey(key="voc_index", device_id=None)].native_value
+        == 158
     )
-    voc_description = parsed.entity_descriptions[DeviceKey(key="voc", device_id=None)]
+    voc_description = parsed.entity_descriptions[
+        DeviceKey(key="voc_index", device_id=None)
+    ]
     assert voc_description.device_class is None
     assert voc_description.native_unit_of_measurement is None
     assert (

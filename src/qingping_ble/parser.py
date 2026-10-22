@@ -176,7 +176,7 @@ class QingpingBluetoothDeviceData(BluetoothData):
             # Sensirion-style VOC index (unitless, 0-500)
             (voc,) = UNPACK_VOC(xdata)
             self.update_sensor(
-                key="voc",
+                key="voc_index",
                 native_unit_of_measurement=None,
                 native_value=voc,
                 name="VOC Index",
