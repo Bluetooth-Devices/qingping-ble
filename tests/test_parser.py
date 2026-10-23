@@ -1863,7 +1863,9 @@ def test_cgr1pc_real_data_temp_rh_noise() -> None:
         == 100
     )
     assert (
-        parsed.entity_values[DeviceKey(key="sound_pressure", device_id=None)].native_value
+        parsed.entity_values[
+            DeviceKey(key="sound_pressure", device_id=None)
+        ].native_value
         == 55
     )
     noise_description = parsed.entity_descriptions[
