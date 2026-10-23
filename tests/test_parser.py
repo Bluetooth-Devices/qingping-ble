@@ -1863,21 +1863,21 @@ def test_cgr1pc_real_data_temp_rh_noise() -> None:
         == 100
     )
     assert (
-        parsed.entity_values[DeviceKey(key="noise", device_id=None)].native_value == 55
+        parsed.entity_values[DeviceKey(key="sound_pressure", device_id=None)].native_value
+        == 55
     )
-    assert (
-        parsed.entity_descriptions[
-            DeviceKey(key="noise", device_id=None)
-        ].native_unit_of_measurement
-        == Units.SOUND_PRESSURE_DB
-    )
+    noise_description = parsed.entity_descriptions[
+        DeviceKey(key="sound_pressure", device_id=None)
+    ]
+    assert noise_description.device_class == "sound_pressure"
+    assert noise_description.native_unit_of_measurement == Units.SOUND_PRESSURE_DB
 
 
 def test_cgr1pc_real_data_voc_index() -> None:
     """Test with real CGR1PC data: VOC index (TLV 0x15) and illuminance.
 
     The VOC index is a unitless Sensirion-style index (eTVOC), so the sensor
-    must have no device class and no unit of measurement.
+    carries the extended (non-standard) voc_index device class and no unit.
     """
     parser = QingpingBluetoothDeviceData()
     service_info = BluetoothServiceInfo(
@@ -1902,7 +1902,7 @@ def test_cgr1pc_real_data_voc_index() -> None:
     voc_description = parsed.entity_descriptions[
         DeviceKey(key="voc_index", device_id=None)
     ]
-    assert voc_description.device_class is None
+    assert voc_description.device_class == "voc_index"
     assert voc_description.native_unit_of_measurement is None
     assert (
         parsed.entity_values[DeviceKey(key="illuminance", device_id=None)].native_value

@@ -18,6 +18,8 @@ from bluetooth_sensor_state_data import BluetoothData
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import BinarySensorDeviceClass, SensorLibrary, Units
 
+from .const import ExtendedSensorDeviceClass
+
 _LOGGER = logging.getLogger(__name__)
 
 UNPACK_TEMP_HUMID = Struct("<hH").unpack
@@ -176,17 +178,19 @@ class QingpingBluetoothDeviceData(BluetoothData):
             # Sensirion-style VOC index (unitless, 0-500)
             (voc,) = UNPACK_VOC(xdata)
             self.update_sensor(
-                key="voc_index",
-                native_unit_of_measurement=None,
-                native_value=voc,
+                key=ExtendedSensorDeviceClass.VOC_INDEX,
                 name="VOC Index",
+                device_class=ExtendedSensorDeviceClass.VOC_INDEX,
+                native_value=voc,
+                native_unit_of_measurement=None,
             )
         elif xdata_id == 0x19 and xdata_size == 1:
             self.update_sensor(
-                key="noise",
+                key=ExtendedSensorDeviceClass.SOUND_PRESSURE,
                 name="Noise",
-                native_unit_of_measurement=Units.SOUND_PRESSURE_DB,
+                device_class=ExtendedSensorDeviceClass.SOUND_PRESSURE,
                 native_value=xdata[0],
+                native_unit_of_measurement=Units.SOUND_PRESSURE_DB,
             )
         elif xdata_id == 0x18 and xdata_size == 2:
             # Static 2-byte hardware capability bitmap (screen type, power
