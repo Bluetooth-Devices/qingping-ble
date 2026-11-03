@@ -56,8 +56,7 @@ DEVICE_TYPES = {
     0x33: QingpingDevice("CGP22C", "CO2 Temp RH"),
     0x4F: QingpingDevice("CGG3", "Temp RH M"),
     0x5D: QingpingDevice("CGP22C", "CO2 Temp RH"),
-    0x52: QingpingDevice("CGR1PC", "Indoor Environment Monitor"),
-    0x62: QingpingDevice("CGR1PC", "Indoor Environment Monitor"),
+    0x3A: QingpingDevice("CGR1PC", "Indoor Environment Monitor"),
 }
 
 

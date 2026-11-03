@@ -1824,10 +1824,7 @@ def test_cgp23w_temp_rh_baro_pro_s_real_data() -> None:
 
 
 def test_cgr1pc_real_data_temp_rh_noise() -> None:
-    """Test with real CGR1PC data (device type 0x52): temp, RH, battery, noise.
-
-    Frame captured from a 0x3A unit with the device type byte adjusted.
-    """
+    """Test with real CGR1PC data (device type 0x3A): temp, RH, battery, noise."""
     parser = QingpingBluetoothDeviceData()
     service_info = BluetoothServiceInfo(
         name="Qingping Indoor",
@@ -1837,7 +1834,7 @@ def test_cgr1pc_real_data_temp_rh_noise() -> None:
         rssi=-60,
         service_data={
             "0000fdcd-0000-1000-8000-00805f9b34fb": (
-                b"\x08R\xa4@\x854-X\x01\x04\xfe\x00?\x02\x02\x01\xff\x19\x017"
+                b"\x08:\xa4@\x854-X\x01\x04\xfe\x00?\x02\x02\x01\xff\x19\x017"
             )
         },
         source="local",
@@ -1890,7 +1887,7 @@ def test_cgr1pc_real_data_voc_index() -> None:
         rssi=-60,
         service_data={
             "0000fdcd-0000-1000-8000-00805f9b34fb": (
-                b"\x08R\xa4@\x854-X\x15\x02\x9e\x00\x09\x04\x81\x02\x00\x00"
+                b"\x08:\xa4@\x854-X\x15\x02\x9e\x00\x09\x04\x81\x02\x00\x00"
             )
         },
         source="local",
